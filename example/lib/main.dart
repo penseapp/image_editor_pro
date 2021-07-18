@@ -39,22 +39,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return condition(
-            condtion: _image == null,
-            isTue: 'Open Editor'.text().xRaisedButton(
-              onPressed: () {
-                getimageditor();
-              },
-            ).toCenter(),
-            isFalse: Image.file(_image).toCenter())
-        .xScaffold(
-            appBar:
-                'Image Editor Pro example'.textMaterialColorWhite().xAppBar(),
-            floatingActionButton:
-                Icons.add.xIcons().xFloationActiobButton(color: Colors.red));
+    return Scaffold(
+      appBar: AppBar(),
+      body: Container(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: getimageditor,
+        child: const Icon(Icons.camera_alt),
+      ),
+    );
   }
-}
-
-Widget condition({bool condtion, Widget isTue, Widget isFalse}) {
-  return condtion ? isTue : isFalse;
 }

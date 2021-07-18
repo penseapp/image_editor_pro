@@ -335,7 +335,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                           },
                         );
                       },
-                      title: 'Brush',
+                      title: 'Pincel',
                     ),
                     BottomBarContainer(
                       icons: Icons.text_fields,
@@ -354,7 +354,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                           howmuchwidgetis++;
                         }
                       },
-                      title: 'Text',
+                      title: 'Texto',
                     ),
                     BottomBarContainer(
                       icons: FontAwesomeIcons.eraser,
@@ -366,7 +366,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                         multiwidget.clear();
                         howmuchwidgetis = 0;
                       },
-                      title: 'Eraser',
+                      title: 'Limpar',
                     ),
                     BottomBarContainer(
                       icons: Icons.photo,
