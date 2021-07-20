@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_editor_pro/constants/picker_state_constant.dart';
 import 'package:image_editor_pro/theme/colors.dart';
-import 'package:image_editor_pro/widgets/expandable_fab.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -158,27 +157,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: bottomsheets,
-        //   backgroundColor: CustomColors.primary,
-        //   child: const Icon(Icons.camera_alt),
-        // ),
-        floatingActionButton: ExpandableFab(
-          distance: 112.0,
-          children: [
-            ActionButton(
-              onPressed: () => {},
-              icon: const Icon(Icons.format_size),
-            ),
-            ActionButton(
-              onPressed: () => {},
-              icon: const Icon(Icons.insert_photo),
-            ),
-            ActionButton(
-              onPressed: () => {},
-              icon: const Icon(Icons.videocam),
-            ),
-          ],
+        floatingActionButton: FloatingActionButton(
+          onPressed: bottomsheets,
+          backgroundColor: CustomColors.primary,
+          child: const Icon(Icons.camera_alt),
         ),
         backgroundColor: Colors.grey,
         key: scaf,
