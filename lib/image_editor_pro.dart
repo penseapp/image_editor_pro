@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:arrow_path/arrow_path.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,6 +26,13 @@ Offset pointFinal;
 var sizeCircle = 0;
 var componentState;
 var component;
+var drawState;
+var squareStack = CustomPaint(
+  painter: SquarePainter(),
+  child: Container(),
+);
+
+final List<OffsetBla> squares = [];
 
 List fontsize = [];
 var howmuchwidgetis = 0;
@@ -104,7 +112,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     radiusCenter = Offset(0.0, 0.0);
     pointInitial = Offset(0.0, 0.0);
     pointFinal = Offset(0.0, 0.0);
-    ;
+    drawState = 'Brush';
     super.initState();
   }
 
@@ -154,76 +162,11 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                               width: width.toDouble(),
                               fit: BoxFit.cover,
                             )
-                          : Container(),
-                      /*GestureDetector(
-                        onPanDown: (DragDownDetails details) {
-                          print(details.localPosition);
-                          setState(() {
-                            pointInitial = details.localPosition;
-                          });
-                        },
-                        onPanUpdate: (DragUpdateDetails details) {
-                          print(details.localPosition);
-                          setState(() {
-                            pointFinal = details.localPosition;
-                          });
-                        },
-                        child: CustomPaint(
-                          painter: ArrowPainter(),
-                          child: Container(),
-                        ),
-                      ),*/
-                      /*GestureDetector(
-                        onPanDown: (DragDownDetails details) {
-                          print(details.localPosition);
-                          setState(() {
-                            radiusCenter = details.localPosition;
-                          });
-                        },
-                        onPanUpdate: (DragUpdateDetails details) {
-                          print(details.localPosition);
-                          setState(() {
-                            squareB = details.localPosition;
-                            sizeCircle = sqrt(pow((squareB.dy - radiusCenter.dy), 2) + pow((squareB.dx - radiusCenter.dx), 2)).toInt();
-                          });
-                        },
-                        child: CustomPaint(
-                          painter: CirclePainter(),
-                          child: Container(),
-                        ),
-                      ),*/
-                      /*GestureDetector(
-                        onPanDown: (DragDownDetails details) {
-                          print(details.localPosition);
-                          setState(() {
-                            squareA = details.localPosition;
-                          });
-                        },
-                        onPanUpdate: (DragUpdateDetails details) {
-                          print(details.localPosition);
-                          setState(() {
-                            squareB = details.localPosition;
-                          });
-                        },
-                        child: CustomPaint(
-                          painter: SquarePainter(),
-                          child: Container(),
-                        ),
-                      ),*/
-                      GestureDetector(
-                              onPanUpdate: (DragUpdateDetails details) {
-                                setState(() {
-                                  RenderBox object = context.findRenderObject();
-                                  var _localPosition = object
-                                      .globalToLocal(details.globalPosition);
-                                  _points = List.from(_points)
-                                    ..add(_localPosition);
-                                });
-                              },
-                              onPanEnd: (DragEndDetails details) {
-                                _points.add(null);
-                              },
-                              child: Signat()),
+                          : Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                            ),
+                      drawSelector(),
                       Stack(
                         children: multiwidget.asMap().entries.map((f) {
                           return type[f.key] == 2
@@ -317,6 +260,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                     BottomBarContainer(
                       icons: Icons.arrow_upward,
                       ontap: () {
+                        drawState = 'Arrow';
                         _controller.clear();
                         type.clear();
                         fontsize.clear();
@@ -327,17 +271,23 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                       title: 'Indicador',
                     ),
                     GestureDetector(
-                      onLongPress: () {
+                      onTap: () {
                         setState(() {
                           switch (componentState) {
                             case 'Square':
                               componentState = 'Circle';
                               component = circle();
+                              setState(() {
+                                drawState = 'Circle';
+                              });
                               break;
 
                             case 'Circle':
                               componentState = 'Square';
                               component = square();
+                              setState(() {
+                                drawState = 'Square';
+                              });
                               break;
                           }
                         });
@@ -355,6 +305,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       icons: Icons.brush,
       ontap: () {
         // raise the [showDialog] widget
+        setState(() {
+          drawState = 'Brush';
+        });
         showDialog(
           context: context,
           builder: (context) {
@@ -519,6 +472,117 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       print(onError);
     });
   }
+
+  Widget drawSelector() {
+    switch (drawState) {
+      case 'Brush':
+        return GestureDetector(
+            onPanUpdate: (DragUpdateDetails details) {
+              setState(() {
+                RenderBox object = context.findRenderObject();
+                var _localPosition =
+                    object.globalToLocal(details.globalPosition);
+                _points = List.from(_points)..add(_localPosition);
+              });
+            },
+            onPanEnd: (DragEndDetails details) {
+              _points.add(null);
+            },
+            child: Signat());
+        break;
+      case 'Square':
+        return GestureDetector(
+          onPanDown: (DragDownDetails details) {
+            print(details.localPosition);
+            setState(() {
+              squareA = details.localPosition;
+            });
+          },
+          onPanUpdate: (DragUpdateDetails details) {
+            print(details.localPosition);
+            setState(() {
+              squareB = details.localPosition;
+            });
+            squareStack = CustomPaint(
+              painter: SquarePainter(),
+              child: Container(),
+            );
+          },
+          onPanEnd: (details) {
+            squares.add(OffsetBla(squareA, squareB));
+            setState(() {
+              squareStack = CustomPaint(
+                painter: SquarePainter(),
+                child: Container(),
+              );
+            });
+          },
+          child: squareStack,
+        );
+        break;
+      case 'Circle':
+        return GestureDetector(
+          onPanDown: (DragDownDetails details) {
+            print(details.localPosition);
+            setState(() {
+              radiusCenter = details.localPosition;
+            });
+          },
+          onPanUpdate: (DragUpdateDetails details) {
+            print(details.localPosition);
+            setState(() {
+              squareB = details.localPosition;
+              sizeCircle = sqrt(pow((squareB.dy - radiusCenter.dy), 2) +
+                      pow((squareB.dx - radiusCenter.dx), 2))
+                  .toInt();
+            });
+          },
+          child: CustomPaint(
+            painter: CirclePainter(),
+            child: Container(),
+          ),
+        );
+        break;
+      case 'Arrow':
+        return GestureDetector(
+          onPanDown: (DragDownDetails details) {
+            print(details.localPosition);
+            setState(() {
+              pointInitial = details.localPosition;
+            });
+          },
+          onPanUpdate: (DragUpdateDetails details) {
+            print(details.localPosition);
+            setState(() {
+              pointFinal = details.localPosition;
+            });
+          },
+          child: CustomPaint(
+            painter: ArrowPainter(),
+            child: Container(),
+          ),
+        );
+        break;
+    }
+    return Container();
+  }
+}
+
+class CirclePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = Colors.teal
+      ..strokeWidth = 5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    canvas.drawCircle(radiusCenter, sizeCircle.toDouble(), paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
 }
 
 class ArrowPainter extends CustomPainter {
@@ -549,6 +613,13 @@ class ArrowPainter extends CustomPainter {
   }
 }
 
+class OffsetBla {
+  Offset a;
+  Offset b;
+
+  OffsetBla(this.a, this.b);
+}
+
 class SquarePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -557,7 +628,11 @@ class SquarePainter extends CustomPainter {
       ..strokeWidth = 5
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
+
     canvas.drawRect(Rect.fromPoints(squareA, squareB), paint);
+
+    squares.forEach((offset) =>
+        canvas.drawRect(Rect.fromPoints(offset.a, offset.b), paint));
   }
 
   @override
