@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:image_editor_pro/constants/picker_state_constant.dart';
+import 'package:image_editor_pro/theme/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
@@ -42,6 +43,7 @@ Offset radiusCenter;
 Offset pointInitial;
 Offset pointFinal;
 int sizeCircle = 0;
+String selectedButton;
 
 var componentState;
 var component;
@@ -138,6 +140,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     howmuchwidgetis = 0;
     componentState = PickerStateConstant.square;
     component = SquareBottomBarContainer(bottomBarColor: widget.bottomBarColor);
+    selectedButton = PickerStateConstant.brush;
     globalSquareA = Offset(-9000, 0.0);
     globalSquareB = Offset(-9000, 0.0);
     globalCircleCenter = Offset(-9000, 0.0);
@@ -154,19 +157,15 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: bottomsheets,
+          backgroundColor: CustomColors.primary,
+          child: const Icon(Icons.camera_alt),
+        ),
         backgroundColor: Colors.grey,
         key: scaf,
         appBar: AppBar(
           actions: <Widget>[
-            // IconButton(
-            //     icon: Icon(Icons.clear),
-            //     onPressed: () {
-            //       _controller.points.clear();
-            //       squares = [];
-            //       circles = [];
-            //       indicators = [];
-            //       setState(() {});
-            //     }),
             IconButton(
                 icon: Icon(Icons.delete),
                 onPressed: () {
@@ -190,7 +189,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                 }),
             IconButton(icon: Icon(Icons.check), onPressed: captureImg),
           ],
-          backgroundColor: widget.appBarColor,
+          backgroundColor: CustomColors.primary,
         ),
         body: Center(
           child: Screenshot(
@@ -216,6 +215,16 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                             ),
                       Stack(
                         children: [
+                          Positioned(
+                            left: -9000,
+                            child: Text(squares.toString()),
+                          ),
+                          // Text(circles.toString()),
+                          circleStack,
+                          squareStack,
+                          indicatorStack,
+                          Signat(),
+                          drawSelector(),
                           ...multiwidget.asMap().entries.map((f) {
                             return type[f.key] == 2
                                 ? TextView(
@@ -245,16 +254,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   )
                                 : Container();
                           }).toList(),
-                          Positioned(
-                            left: -9000,
-                            child: Text(squares.toString()),
-                          ),
-                          // Text(circles.toString()),
-                          circleStack,
-                          squareStack,
-                          indicatorStack,
-                          Signat(),
-                          drawSelector(),
                         ],
                       ),
                     ],
@@ -273,47 +272,34 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   scrollDirection: Axis.horizontal,
                   children: <Widget>[
                     brush(),
-                    TextBottomBarContainer(type: type, offsets: offsets),
-                    BottomBarContainer(
-                      icons: Icons.camera,
-                      ontap: () {
-                        bottomsheets();
-                      },
-                      title: 'Foto',
-                    ),
                     BottomBarContainer(
                       icons: Icons.arrow_upward,
+                      isSelected: selectedButton == PickerStateConstant.arrow,
                       ontap: () {
+                        selectedButton = PickerStateConstant.arrow;
                         drawState = PickerStateConstant.arrow;
                       },
                       title: 'Indicador',
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          switch (componentState) {
-                            case PickerStateConstant.square:
-                              componentState = PickerStateConstant.circle;
-                              component = CircleBottomBar(
-                                  bottomBarColor: widget.bottomBarColor);
-                              setState(() {
-                                drawState = PickerStateConstant.circle;
-                              });
-                              break;
-
-                            case PickerStateConstant.circle:
-                              componentState = PickerStateConstant.square;
-                              component = SquareBottomBarContainer(
-                                  bottomBarColor: widget.bottomBarColor);
-                              setState(() {
-                                drawState = PickerStateConstant.square;
-                              });
-                              break;
-                          }
-                        });
+                    BottomBarContainer(
+                      icons: Icons.crop_square_rounded,
+                      isSelected: selectedButton == PickerStateConstant.square,
+                      ontap: () {
+                        selectedButton = PickerStateConstant.square;
+                        drawState = PickerStateConstant.square;
                       },
-                      child: component,
+                      title: 'Quadrado',
                     ),
+                    BottomBarContainer(
+                      icons: Icons.circle_outlined,
+                      isSelected: selectedButton == PickerStateConstant.circle,
+                      ontap: () {
+                        selectedButton = PickerStateConstant.circle;
+                        drawState = PickerStateConstant.circle;
+                      },
+                      title: 'Círculo',
+                    ),
+                    TextBottomBarContainer(type: type, offsets: offsets),
                   ],
                 ),
               ));
@@ -323,9 +309,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     return BottomBarContainer(
       colors: widget.bottomBarColor,
       icons: Icons.brush,
+      isSelected: selectedButton == PickerStateConstant.brush,
       ontap: () {
-        // raise the [showDialog] widget
         setState(() {
+          selectedButton = PickerStateConstant.brush;
           drawState = PickerStateConstant.brush;
         });
         showDialog(

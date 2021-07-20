@@ -14,8 +14,10 @@ class TextBottomBarContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomBarContainer(
       icons: Icons.text_fields,
+      isSelected: selectedButton == PickerStateConstant.text,
       ontap: () async {
         String value;
+        selectedButton = PickerStateConstant.text;
 
         await showDialog(
           context: context,
