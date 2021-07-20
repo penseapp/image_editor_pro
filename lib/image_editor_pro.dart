@@ -1,18 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:arrow_path/arrow_path.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_editor_pro/modules/all_emojies.dart';
 import 'package:image_editor_pro/modules/bottombar_container.dart';
 import 'package:image_editor_pro/modules/colors_picker.dart';
-import 'package:image_editor_pro/modules/emoji.dart';
-import 'package:image_editor_pro/modules/text.dart';
 import 'package:image_editor_pro/modules/textview.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
@@ -21,6 +17,14 @@ TextEditingController heightcontroler = TextEditingController();
 TextEditingController widthcontroler = TextEditingController();
 var width = 300;
 var height = 300;
+Offset squareA;
+Offset squareB;
+Offset radiusCenter;
+Offset pointInitial;
+Offset pointFinal;
+var sizeCircle = 0;
+var componentState;
+var component;
 
 List fontsize = [];
 var howmuchwidgetis = 0;
@@ -33,6 +37,7 @@ SignatureController _controller =
 class ImageEditorPro extends StatefulWidget {
   final Color appBarColor;
   final Color bottomBarColor;
+
   ImageEditorPro({this.appBarColor, this.bottomBarColor});
 
   @override
@@ -68,6 +73,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   File _image;
   ScreenshotController screenshotController = ScreenshotController();
   Timer timeprediction;
+
   void timers() {
     Timer.periodic(Duration(milliseconds: 10), (tim) {
       setState(() {});
@@ -91,7 +97,14 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     offsets.clear();
     multiwidget.clear();
     howmuchwidgetis = 0;
-
+    componentState = 'Square';
+    component = square();
+    squareA = Offset(0.0, 0.0);
+    squareB = Offset(0.0, 0.0);
+    radiusCenter = Offset(0.0, 0.0);
+    pointInitial = Offset(0.0, 0.0);
+    pointFinal = Offset(0.0, 0.0);
+    ;
     super.initState();
   }
 
@@ -103,97 +116,23 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         appBar: AppBar(
           actions: <Widget>[
             IconButton(
-                icon: Icon(FontAwesomeIcons.boxes),
-                onPressed: () {
-                  showCupertinoDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text('Select Height Width'),
-                          actions: <Widget>[
-                            FlatButton(
-                                onPressed: () {
-                                  setState(() {
-                                    height = int.parse(heightcontroler.text);
-                                    width = int.parse(widthcontroler.text);
-                                  });
-                                  heightcontroler.clear();
-                                  widthcontroler.clear();
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Done'))
-                          ],
-                          content: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text('Define Height'),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                TextField(
-                                    controller: heightcontroler,
-                                    keyboardType:
-                                        TextInputType.numberWithOptions(),
-                                    decoration: InputDecoration(
-                                        hintText: 'Height',
-                                        contentPadding:
-                                            EdgeInsets.only(left: 10),
-                                        border: OutlineInputBorder())),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text('Define Width'),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                TextField(
-                                    controller: widthcontroler,
-                                    keyboardType:
-                                        TextInputType.numberWithOptions(),
-                                    decoration: InputDecoration(
-                                        hintText: 'Width',
-                                        contentPadding:
-                                            EdgeInsets.only(left: 10),
-                                        border: OutlineInputBorder())),
-                              ],
-                            ),
-                          ),
-                        );
-                      });
-                }),
-            IconButton(
                 icon: Icon(Icons.clear),
                 onPressed: () {
                   _controller.points.clear();
                   setState(() {});
                 }),
             IconButton(
-                icon: Icon(Icons.camera),
+                icon: Icon(Icons.delete),
                 onPressed: () {
-                  bottomsheets();
+                  _controller.clear();
+                  type.clear();
+                  fontsize.clear();
+                  offsets.clear();
+                  multiwidget.clear();
+                  howmuchwidgetis = 0;
+                  setState(() {});
                 }),
-            FlatButton(
-                child: Text('Done'),
-                textColor: Colors.white,
-                onPressed: () {
-                  screenshotController
-                      .capture(
-                          delay: Duration(milliseconds: 500), pixelRatio: 1.5)
-                      .then((File image) async {
-                    //print("Capture Done");
-
-                    final paths = await getExternalStorageDirectory();
-                    await image.copy(paths.path +
-                        '/' +
-                        DateTime.now().millisecondsSinceEpoch.toString() +
-                        '.png');
-                    Navigator.pop(context, image);
-                  }).catchError((onError) {
-                    print(onError);
-                  });
-                }),
+            IconButton(icon: Icon(Icons.check), onPressed: captureImg),
           ],
           backgroundColor: widget.appBarColor,
         ),
@@ -201,10 +140,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           child: Screenshot(
             controller: screenshotController,
             child: Container(
-              margin: EdgeInsets.all(20),
               color: Colors.white,
-              width: width.toDouble(),
-              height: height.toDouble(),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
               child: RepaintBoundary(
                   key: globalKey,
                   child: Stack(
@@ -217,26 +155,79 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                               fit: BoxFit.cover,
                             )
                           : Container(),
-                      Container(
-                        child: GestureDetector(
-                            onPanUpdate: (DragUpdateDetails details) {
-                              setState(() {
-                                RenderBox object = context.findRenderObject();
-                                var _localPosition = object
-                                    .globalToLocal(details.globalPosition);
-                                _points = List.from(_points)
-                                  ..add(_localPosition);
-                              });
-                            },
-                            onPanEnd: (DragEndDetails details) {
-                              _points.add(null);
-                            },
-                            child: Signat()),
-                      ),
+                      /*GestureDetector(
+                        onPanDown: (DragDownDetails details) {
+                          print(details.localPosition);
+                          setState(() {
+                            pointInitial = details.localPosition;
+                          });
+                        },
+                        onPanUpdate: (DragUpdateDetails details) {
+                          print(details.localPosition);
+                          setState(() {
+                            pointFinal = details.localPosition;
+                          });
+                        },
+                        child: CustomPaint(
+                          painter: ArrowPainter(),
+                          child: Container(),
+                        ),
+                      ),*/
+                      /*GestureDetector(
+                        onPanDown: (DragDownDetails details) {
+                          print(details.localPosition);
+                          setState(() {
+                            radiusCenter = details.localPosition;
+                          });
+                        },
+                        onPanUpdate: (DragUpdateDetails details) {
+                          print(details.localPosition);
+                          setState(() {
+                            squareB = details.localPosition;
+                            sizeCircle = sqrt(pow((squareB.dy - radiusCenter.dy), 2) + pow((squareB.dx - radiusCenter.dx), 2)).toInt();
+                          });
+                        },
+                        child: CustomPaint(
+                          painter: CirclePainter(),
+                          child: Container(),
+                        ),
+                      ),*/
+                      /*GestureDetector(
+                        onPanDown: (DragDownDetails details) {
+                          print(details.localPosition);
+                          setState(() {
+                            squareA = details.localPosition;
+                          });
+                        },
+                        onPanUpdate: (DragUpdateDetails details) {
+                          print(details.localPosition);
+                          setState(() {
+                            squareB = details.localPosition;
+                          });
+                        },
+                        child: CustomPaint(
+                          painter: SquarePainter(),
+                          child: Container(),
+                        ),
+                      ),*/
+                      GestureDetector(
+                              onPanUpdate: (DragUpdateDetails details) {
+                                setState(() {
+                                  RenderBox object = context.findRenderObject();
+                                  var _localPosition = object
+                                      .globalToLocal(details.globalPosition);
+                                  _points = List.from(_points)
+                                    ..add(_localPosition);
+                                });
+                              },
+                              onPanEnd: (DragEndDetails details) {
+                                _points.add(null);
+                              },
+                              child: Signat()),
                       Stack(
                         children: multiwidget.asMap().entries.map((f) {
-                          return type[f.key] == 1
-                              ? EmojiView(
+                          return type[f.key] == 2
+                              ? TextView(
                                   left: offsets[f.key].dx,
                                   top: offsets[f.key].dy,
                                   ontap: () {
@@ -259,34 +250,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   fontsize: fontsize[f.key].toDouble(),
                                   align: TextAlign.center,
                                 )
-                              : type[f.key] == 2
-                                  ? TextView(
-                                      left: offsets[f.key].dx,
-                                      top: offsets[f.key].dy,
-                                      ontap: () {
-                                        scaf.currentState
-                                            .showBottomSheet((context) {
-                                          return Sliders(
-                                            size: f.key,
-                                            sizevalue:
-                                                fontsize[f.key].toDouble(),
-                                          );
-                                        });
-                                      },
-                                      onpanupdate: (details) {
-                                        setState(() {
-                                          offsets[f.key] = Offset(
-                                              offsets[f.key].dx +
-                                                  details.delta.dx,
-                                              offsets[f.key].dy +
-                                                  details.delta.dy);
-                                        });
-                                      },
-                                      value: f.value.toString(),
-                                      fontsize: fontsize[f.key].toDouble(),
-                                      align: TextAlign.center,
-                                    )
-                                  : Container();
+                              : Container();
                         }).toList(),
                       )
                     ],
@@ -304,29 +268,35 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: <Widget>[
+                    brush(),
                     BottomBarContainer(
-                      colors: widget.bottomBarColor,
-                      icons: FontAwesomeIcons.brush,
-                      ontap: () {
-                        // raise the [showDialog] widget
-                        showDialog(
+                      icons: Icons.text_fields,
+                      ontap: () async {
+                        String value;
+
+                        await showDialog(
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: const Text('Pick a color!'),
                               content: SingleChildScrollView(
-                                child: ColorPicker(
-                                  pickerColor: pickerColor,
-                                  onColorChanged: changeColor,
-                                  showLabel: true,
-                                  pickerAreaHeightPercent: 0.8,
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                      labelText: "Adicione um texto"),
+                                  keyboardType: TextInputType.multiline,
+                                  onChanged: (r) => value = r,
                                 ),
                               ),
                               actions: <Widget>[
                                 FlatButton(
-                                  child: const Text('Got it'),
+                                  child: const Text('Salvar'),
                                   onPressed: () {
-                                    setState(() => currentColor = pickerColor);
+                                    if (value != null) {
+                                      type.add(2);
+                                      fontsize.add(20);
+                                      offsets.add(Offset.zero);
+                                      multiwidget.add(value);
+                                      howmuchwidgetis++;
+                                    }
                                     Navigator.of(context).pop();
                                   },
                                 ),
@@ -335,29 +305,17 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                           },
                         );
                       },
-                      title: 'Pincel',
-                    ),
-                    BottomBarContainer(
-                      icons: Icons.text_fields,
-                      ontap: () async {
-                        final value = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => TextEditor()));
-                        if (value.toString().isEmpty) {
-                          print('true');
-                        } else {
-                          type.add(2);
-                          fontsize.add(20);
-                          offsets.add(Offset.zero);
-                          multiwidget.add(value);
-                          howmuchwidgetis++;
-                        }
-                      },
                       title: 'Texto',
                     ),
                     BottomBarContainer(
-                      icons: FontAwesomeIcons.eraser,
+                      icons: Icons.camera,
+                      ontap: () {
+                        bottomsheets();
+                      },
+                      title: 'Foto',
+                    ),
+                    BottomBarContainer(
+                      icons: Icons.arrow_upward,
                       ontap: () {
                         _controller.clear();
                         type.clear();
@@ -366,42 +324,81 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                         multiwidget.clear();
                         howmuchwidgetis = 0;
                       },
-                      title: 'Limpar',
+                      title: 'Indicador',
                     ),
-                    BottomBarContainer(
-                      icons: Icons.photo,
-                      ontap: () {
-                        showModalBottomSheet(
-                            context: context,
-                            builder: (context) {
-                              return ColorPiskersSlider();
-                            });
-                      },
-                      title: 'Filter',
-                    ),
-                    BottomBarContainer(
-                      icons: FontAwesomeIcons.smile,
-                      ontap: () {
-                        var getemojis = showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return Emojies();
-                            });
-                        getemojis.then((value) {
-                          if (value != null) {
-                            type.add(1);
-                            fontsize.add(20);
-                            offsets.add(Offset.zero);
-                            multiwidget.add(value);
-                            howmuchwidgetis++;
+                    GestureDetector(
+                      onLongPress: () {
+                        setState(() {
+                          switch (componentState) {
+                            case 'Square':
+                              componentState = 'Circle';
+                              component = circle();
+                              break;
+
+                            case 'Circle':
+                              componentState = 'Square';
+                              component = square();
+                              break;
                           }
                         });
                       },
-                      title: 'Emoji',
+                      child: component,
                     ),
                   ],
                 ),
               ));
+  }
+
+  Widget brush() {
+    return BottomBarContainer(
+      colors: widget.bottomBarColor,
+      icons: Icons.brush,
+      ontap: () {
+        // raise the [showDialog] widget
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Pick a color!'),
+              content: SingleChildScrollView(
+                child: ColorPicker(
+                  pickerColor: pickerColor,
+                  onColorChanged: changeColor,
+                  showLabel: true,
+                  pickerAreaHeightPercent: 0.8,
+                ),
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: const Text('Got it'),
+                  onPressed: () {
+                    setState(() => currentColor = pickerColor);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+      title: 'Pincel',
+    );
+  }
+
+  Widget square() {
+    return BottomBarContainer(
+      colors: widget.bottomBarColor,
+      icons: Icons.crop_square,
+      title: 'Quadrado',
+    );
+  }
+
+  Widget circle() {
+    return BottomBarContainer(
+      colors: widget.bottomBarColor,
+      icons: Icons.circle,
+      title: 'Circulo',
+    );
   }
 
   final picker = ImagePicker();
@@ -421,7 +418,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Text('Select Image Options'),
+                child: Text('Selecione uma Imagem'),
               ),
               Divider(
                 height: 1,
@@ -456,7 +453,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                     Navigator.pop(context);
                                   }),
                               SizedBox(width: 10),
-                              Text('Open Gallery')
+                              Text('Selecionar Foto')
                             ],
                           ),
                         ),
@@ -485,7 +482,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   Navigator.pop(context);
                                 }),
                             SizedBox(width: 10),
-                            Text('Open Camera')
+                            Text('Abrir Camera')
                           ],
                         ),
                       ),
@@ -504,6 +501,68 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   void _closeModal(void value) {
     openbottomsheet = false;
     setState(() {});
+  }
+
+  void captureImg() {
+    screenshotController
+        .capture(delay: Duration(milliseconds: 500), pixelRatio: 1.5)
+        .then((File image) async {
+      //print("Capture Done");
+
+      final paths = await getExternalStorageDirectory();
+      await image.copy(paths.path +
+          '/' +
+          DateTime.now().millisecondsSinceEpoch.toString() +
+          '.png');
+      Navigator.pop(context, image);
+    }).catchError((onError) {
+      print(onError);
+    });
+  }
+}
+
+class ArrowPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Path path;
+
+    // The arrows usually looks better with rounded caps.
+    var paint = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..strokeWidth = 3.0;
+
+    /// Draw a single arrow.
+    path = Path();
+    path.moveTo(pointInitial.dx, pointInitial.dy);
+    path.cubicTo(pointFinal.dx, pointFinal.dy, pointFinal.dx, pointFinal.dy,
+        pointFinal.dx, pointFinal.dy);
+    path = ArrowPath.make(path: path);
+    canvas.drawPath(path, paint..color = Colors.blue);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+class SquarePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = Colors.red
+      ..strokeWidth = 5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    canvas.drawRect(Rect.fromPoints(squareA, squareB), paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }
 
@@ -538,7 +597,9 @@ class _SignatState extends State<Signat> {
 class Sliders extends StatefulWidget {
   final int size;
   final sizevalue;
+
   const Sliders({Key key, this.size, this.sizevalue}) : super(key: key);
+
   @override
   _SlidersState createState() => _SlidersState();
 }
@@ -559,7 +620,7 @@ class _SlidersState extends State<Sliders> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Text('Slider Size'),
+              child: Text('Tamanho'),
             ),
             Divider(
               height: 1,

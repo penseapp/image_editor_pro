@@ -3,15 +3,31 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="NONE" />
   </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="ee1404f7-9294-4991-a6b8-0e1e50d3acf8" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/example_lib_main_dart.xml" beforeDir="false" />
+    <list default="true" id="ee1404f7-9294-4991-a6b8-0e1e50d3acf8" name="Default Changelist" comment="update lib to run no mobile">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/image_editor_pro.iml" beforeDir="false" afterPath="$PROJECT_DIR$/image_editor_pro.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/image_editor_pro.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/image_editor_pro.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,28 +64,74 @@
       <option name="presentableId" value="Default" />
       <updated>1626649459166</updated>
     </task>
+    <task id="LOCAL-00001" summary="update lib to run no mobile">
+      <created>1626651861965</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1626651861966</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="update lib to run no mobile" />
+    <option name="LAST_COMMIT_MESSAGE" value="update lib to run no mobile" />
+  </component>
   <component name="WindowStateProjectService">
-    <state width="1874" height="455" key="GridCell.Tab.0.bottom" timestamp="1626649564523">
+    <state x="418" y="198" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1626653933873">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1874" height="455" key="GridCell.Tab.0.bottom/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626649564523" />
-    <state width="1874" height="455" key="GridCell.Tab.0.center" timestamp="1626649564523">
+    <state x="418" y="198" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626653933873" />
+    <state width="1874" height="310" key="GridCell.Tab.0.bottom" timestamp="1626722105327">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state width="1264" height="310" key="GridCell.Tab.0.bottom/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626667980012" />
+    <state width="1874" height="310" key="GridCell.Tab.0.bottom/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626722105327" />
+    <state width="1874" height="310" key="GridCell.Tab.0.bottom/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707271942" />
+    <state width="1874" height="310" key="GridCell.Tab.0.center" timestamp="1626722105326">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state width="1264" height="310" key="GridCell.Tab.0.center/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626667980012" />
+    <state width="1874" height="310" key="GridCell.Tab.0.center/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626722105326" />
+    <state width="1874" height="310" key="GridCell.Tab.0.center/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707271942" />
+    <state width="1874" height="310" key="GridCell.Tab.0.left" timestamp="1626722105326">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state width="1264" height="310" key="GridCell.Tab.0.left/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626667980012" />
+    <state width="1874" height="310" key="GridCell.Tab.0.left/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626722105326" />
+    <state width="1874" height="310" key="GridCell.Tab.0.left/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707271942" />
+    <state width="1874" height="310" key="GridCell.Tab.0.right" timestamp="1626722105326">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state width="1264" height="310" key="GridCell.Tab.0.right/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626667980012" />
+    <state width="1874" height="310" key="GridCell.Tab.0.right/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626722105326" />
+    <state width="1874" height="310" key="GridCell.Tab.0.right/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707271942" />
+    <state x="555" y="276" width="800" height="535" key="Vcs.Push.Dialog.v2" timestamp="1626651863431">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="1874" height="455" key="GridCell.Tab.0.center/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626649564523" />
-    <state width="1874" height="455" key="GridCell.Tab.0.left" timestamp="1626649564523">
-      <screen x="0" y="0" width="1920" height="1080" />
+    <state x="555" y="276" width="800" height="535" key="Vcs.Push.Dialog.v2/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626651863431" />
+    <state x="2571" y="279" width="618" height="522" key="find.popup" timestamp="1626707313514">
+      <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1874" height="455" key="GridCell.Tab.0.left/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626649564523" />
-    <state width="1874" height="455" key="GridCell.Tab.0.right" timestamp="1626649564523">
-      <screen x="0" y="0" width="1920" height="1080" />
+    <state x="651" y="279" width="618" height="522" key="find.popup/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626662668885" />
+    <state x="2571" y="279" width="618" height="522" key="find.popup/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707313514" />
+    <state x="305" y="260" width="672" height="662" key="search.everywhere.popup" timestamp="1626726899599">
+      <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state width="1874" height="455" key="GridCell.Tab.0.right/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626649564523" />
-    <state x="651" y="279" width="618" height="522" key="find.popup" timestamp="1626649693135">
-      <screen x="0" y="0" width="1920" height="1080" />
-    </state>
-    <state x="651" y="279" width="618" height="522" key="find.popup/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626649693135" />
+    <state x="305" y="239" width="672" height="678" key="search.everywhere.popup/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626666564728" />
+    <state x="305" y="260" width="672" height="662" key="search.everywhere.popup/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626726899599" />
   </component>
 </project>
