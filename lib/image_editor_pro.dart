@@ -44,6 +44,8 @@ Offset pointInitial;
 Offset pointFinal;
 int sizeCircle = 0;
 String selectedButton;
+Color selectedColor = Colors.black;
+double selectedSize = 12;
 
 var componentState;
 var component;
@@ -73,7 +75,7 @@ List multiwidget = [];
 Color currentcolors = Colors.white;
 double opacity = 0.0;
 SignatureController _controller =
-    SignatureController(penStrokeWidth: 5, penColor: Colors.green);
+    SignatureController(penStrokeWidth: 5, penColor: selectedColor);
 
 class ImageEditorPro extends StatefulWidget {
   final Color appBarColor;
@@ -94,7 +96,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
 // ValueChanged<Color> callback
   void changeColor(Color color) {
-    setState(() => pickerColor = color);
+    setState(() => selectedColor = color);
     var points = _controller.points;
     _controller =
         SignatureController(penStrokeWidth: 5, penColor: color, points: points);
@@ -147,6 +149,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     squares.clear();
     circles.clear();
     indicators.clear();
+    selectedColor = Colors.black;
+    selectedSize = 12;
     drawState = PickerStateConstant.brush;
     super.initState();
   }
@@ -175,7 +179,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           ],
           backgroundColor: CustomColors.primary,
         ),
-        body: Center(
+        body: Stack(
+          children: [Center(
           child: Screenshot(
             controller: screenshotController,
             child: Container(
@@ -210,46 +215,107 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   Text(multiwidget.length.toString()),
                                 ],
                               )),
-                          circleStack,
-                          squareStack,
-                          indicatorStack,
-                          Signat(),
-                          drawSelector(),
-                          ...multiwidget.asMap().entries.map((f) {
-                            return type[f.key] == 2
-                                ? TextView(
-                                    left: offsets[f.key].dx,
-                                    top: offsets[f.key].dy,
-                                    ontap: () {
-                                      scaf.currentState
-                                          .showBottomSheet((context) {
-                                        return Sliders(
-                                          size: f.key,
-                                          sizevalue: fontsize[f.key].toDouble(),
-                                        );
-                                      });
-                                    },
-                                    onpanupdate: (details) {
-                                      setState(() {
-                                        offsets[f.key] = Offset(
-                                            offsets[f.key].dx +
-                                                details.delta.dx,
-                                            offsets[f.key].dy +
-                                                details.delta.dy);
-                                      });
-                                    },
-                                    value: f.value.toString(),
-                                    fontsize: fontsize[f.key].toDouble(),
-                                    align: TextAlign.center,
-                                  )
-                                : Container();
-                          }).toList(),
+                              circleStack,
+                              squareStack,
+                              indicatorStack,
+                              Signat(),
+                              drawSelector(),
+                              ...multiwidget.asMap().entries.map((f) {
+                                return type[f.key] == 2
+                                    ? TextView(
+                                        left: offsets[f.key].dx,
+                                        top: offsets[f.key].dy,
+                                        ontap: () {
+                                          scaf.currentState
+                                              .showBottomSheet((context) {
+                                            return Sliders(
+                                              size: f.key,
+                                              sizevalue:
+                                                  fontsize[f.key].toDouble(),
+                                            );
+                                          });
+                                        },
+                                        onpanupdate: (details) {
+                                          setState(() {
+                                            offsets[f.key] = Offset(
+                                                offsets[f.key].dx +
+                                                    details.delta.dx,
+                                                offsets[f.key].dy +
+                                                    details.delta.dy);
+                                          });
+                                        },
+                                        value: f.value.toString(),
+                                        fontsize: fontsize[f.key].toDouble(),
+                                        align: TextAlign.center,
+                                      )
+                                    : Container();
+                              }).toList(),
+                            ],
+                          ),
                         ],
-                      ),
-                    ],
-                  )),
+                      )),
+                ),
+              ),
             ),
-          ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 20, right: 50),
+                child: SizedBox(
+                  width: 300,
+                  height: 50,
+                  child: Slider(
+                    value: selectedSize.toDouble(),
+                    min: 0,
+                    max: 100,
+                    divisions: 100,
+                    label: '$selectedSize',
+                    onChanged: (double newValue) {
+                      setState(() {
+                        selectedSize = newValue.round().toDouble();
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Wrap(
+                  direction: Axis.vertical,
+                  spacing: 20,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.circle, color: CustomColors.riskHigh3),
+                      onPressed: () {
+                        setState(() {
+                          selectedColor = CustomColors.riskHigh3;
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.circle, color: CustomColors.riskLow3),
+                      onPressed: () {
+                        setState(() {
+                          selectedColor = CustomColors.riskLow3;
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.circle, color: CustomColors.riskMedium3),
+                      onPressed: () {
+                        setState(() {
+                          selectedColor = CustomColors.riskMedium3;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
         bottomNavigationBar: openbottomsheet
             ? Container()
@@ -381,31 +447,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           selectedButton = PickerStateConstant.brush;
           drawState = PickerStateConstant.brush;
         });
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Escolha uma cor!'),
-              content: SingleChildScrollView(
-                child: ColorPicker(
-                  pickerColor: pickerColor,
-                  onColorChanged: changeColor,
-                  showLabel: true,
-                  pickerAreaHeightPercent: 0.8,
-                ),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: const Text('Entendi'),
-                  onPressed: () {
-                    setState(() => currentColor = pickerColor);
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
       },
       title: 'Pincel',
     );
@@ -637,6 +678,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             indicators.add(OffsetIndicator(
               pointFinal: pointFinal,
               pointInitial: pointInitial,
+              color: selectedColor,
+              size: selectedSize
             ));
             setState(() {
               indicatorStack = CustomPaint(
