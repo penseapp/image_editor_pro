@@ -44,7 +44,7 @@ Offset pointInitial;
 Offset pointFinal;
 int sizeCircle = 0;
 String selectedButton;
-Color selectedColor = Colors.black;
+Color selectedColor = CustomColors.riskExtremely3;
 double selectedSize = 12;
 
 var componentState;
@@ -180,41 +180,43 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           backgroundColor: CustomColors.primary,
         ),
         body: Stack(
-          children: [Center(
-          child: Screenshot(
-            controller: screenshotController,
-            child: Container(
-              color: Colors.white,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: RepaintBoundary(
-                  key: globalKey,
-                  child: Stack(
-                    children: <Widget>[
-                      _image != null
-                          ? Image.file(
-                              _image,
-                              height: height.toDouble(),
-                              width: width.toDouble(),
-                              fit: BoxFit.cover,
-                            )
-                          : Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height,
-                            ),
-                      Stack(
-                        children: [
-                          Positioned(
-                              left: -300,
-                              child: Column(
-                                children: [
-                                  Text(squares.length.toString()),
-                                  Text(circles.length.toString()),
-                                  Text(indicators.length.toString()),
-                                  Text(_controller.points.length.toString()),
-                                  Text(multiwidget.length.toString()),
-                                ],
-                              )),
+          children: [
+            Center(
+              child: Screenshot(
+                controller: screenshotController,
+                child: Container(
+                  color: Colors.white,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: RepaintBoundary(
+                      key: globalKey,
+                      child: Stack(
+                        children: <Widget>[
+                          _image != null
+                              ? Image.file(
+                                  _image,
+                                  height: height.toDouble(),
+                                  width: width.toDouble(),
+                                  fit: BoxFit.cover,
+                                )
+                              : Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: MediaQuery.of(context).size.height,
+                                ),
+                          Stack(
+                            children: [
+                              Positioned(
+                                  left: -300,
+                                  child: Column(
+                                    children: [
+                                      Text(squares.length.toString()),
+                                      Text(circles.length.toString()),
+                                      Text(indicators.length.toString()),
+                                      Text(
+                                          _controller.points.length.toString()),
+                                      Text(multiwidget.length.toString()),
+                                    ],
+                                  )),
                               circleStack,
                               squareStack,
                               indicatorStack,
@@ -266,9 +268,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   height: 50,
                   child: Slider(
                     value: selectedSize.toDouble(),
-                    min: 0,
-                    max: 100,
-                    divisions: 100,
+                    min: 10,
+                    max: 36,
+                    divisions: 36,
                     label: '$selectedSize',
                     onChanged: (double newValue) {
                       setState(() {
@@ -287,29 +289,109 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   direction: Axis.vertical,
                   spacing: 20,
                   children: [
-                    IconButton(
-                      icon: Icon(Icons.circle, color: CustomColors.riskHigh3),
-                      onPressed: () {
-                        setState(() {
-                          selectedColor = CustomColors.riskHigh3;
-                        });
-                      },
+                    Stack(
+                      children: [
+                        if (selectedColor == CustomColors.riskExtremely3)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.circle_outlined,
+                              size: 32,
+                            ),
+                          ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.circle,
+                            color: CustomColors.riskExtremely3,
+                            size: selectedColor == CustomColors.riskExtremely3
+                                ? 20
+                                : 24,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              selectedColor = CustomColors.riskExtremely3;
+                            });
+                          },
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      icon: Icon(Icons.circle, color: CustomColors.riskLow3),
-                      onPressed: () {
-                        setState(() {
-                          selectedColor = CustomColors.riskLow3;
-                        });
-                      },
+                    Stack(
+                      children: [
+                        if (selectedColor == CustomColors.riskHigh3)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.circle_outlined,
+                              size: 32,
+                            ),
+                          ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.circle,
+                            color: CustomColors.riskHigh3,
+                            size: selectedColor == CustomColors.riskHigh3
+                                ? 20
+                                : 24,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              selectedColor = CustomColors.riskHigh3;
+                            });
+                          },
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      icon: Icon(Icons.circle, color: CustomColors.riskMedium3),
-                      onPressed: () {
-                        setState(() {
-                          selectedColor = CustomColors.riskMedium3;
-                        });
-                      },
+                    Stack(
+                      children: [
+                        if (selectedColor == CustomColors.riskLow3)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.circle_outlined,
+                              size: 32,
+                            ),
+                          ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.circle,
+                            color: CustomColors.riskLow3,
+                            size: selectedColor == CustomColors.riskLow3
+                                ? 20
+                                : 24,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              selectedColor = CustomColors.riskLow3;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Stack(
+                      children: [
+                        if (selectedColor == CustomColors.riskMedium3)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.circle_outlined,
+                              size: 32,
+                            ),
+                          ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.circle,
+                            color: CustomColors.riskMedium3,
+                            size: selectedColor == CustomColors.riskMedium3
+                                ? 20
+                                : 24,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              selectedColor = CustomColors.riskMedium3;
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -676,11 +758,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           },
           onPanEnd: (details) {
             indicators.add(OffsetIndicator(
-              pointFinal: pointFinal,
-              pointInitial: pointInitial,
-              color: selectedColor,
-              size: selectedSize
-            ));
+                pointFinal: pointFinal,
+                pointInitial: pointInitial,
+                color: selectedColor,
+                size: selectedSize));
             setState(() {
               indicatorStack = CustomPaint(
                 painter: IndicatorPainter(),
