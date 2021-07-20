@@ -1,3 +1,5 @@
+library image_editor_pro;
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
@@ -6,39 +8,68 @@ import 'package:arrow_path/arrow_path.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:image_editor_pro/modules/bottombar_container.dart';
-import 'package:image_editor_pro/modules/colors_picker.dart';
-import 'package:image_editor_pro/modules/textview.dart';
+import 'package:image_editor_pro/constants/picker_state_constant.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
+import 'package:image_editor_pro/utils/offset_class.dart';
+
+import 'package:image_editor_pro/modules/bottombar_container.dart';
+import 'package:image_editor_pro/modules/colors_picker.dart';
+import 'package:image_editor_pro/modules/textview.dart';
+
+part 'painters/square_painter.dart';
+part 'painters/circle_painter.dart';
+part 'painters/indicator_painter.dart';
+
+part 'widgets/signat.dart';
+part 'widgets/color_pickers_slider.dart';
+part 'widgets/sliders.dart';
+part 'widgets/bottom_navigation_bar/text_bottom_bar_container.dart';
+part 'widgets/bottom_navigation_bar/circle_bottom_bar_container.dart';
+part 'widgets/bottom_navigation_bar/square_bottom_bar_container.dart';
 
 TextEditingController heightcontroler = TextEditingController();
 TextEditingController widthcontroler = TextEditingController();
-var width = 300;
-var height = 300;
-Offset squareA;
-Offset squareB;
+int width = 300;
+int height = 300;
+
+Offset globalSquareA;
+Offset globalSquareB;
+Offset globalCircleCenter;
 Offset radiusCenter;
 Offset pointInitial;
 Offset pointFinal;
-var sizeCircle = 0;
+int sizeCircle = 0;
+
 var componentState;
 var component;
 var drawState;
-var squareStack = CustomPaint(
+
+List<OffsetSquare> squares = [];
+CustomPaint squareStack = CustomPaint(
   painter: SquarePainter(),
   child: Container(),
 );
 
-final List<OffsetBla> squares = [];
+List<OffsetCircle> circles = [];
+CustomPaint circleStack = CustomPaint(
+  painter: CirclePainter(),
+  child: Container(),
+);
+
+List<OffsetIndicator> indicators = [];
+CustomPaint indicatorStack = CustomPaint(
+  painter: IndicatorPainter(),
+  child: Container(),
+);
 
 List fontsize = [];
-var howmuchwidgetis = 0;
+int howmuchwidgetis = 0;
 List multiwidget = [];
 Color currentcolors = Colors.white;
-var opicity = 0.0;
+double opacity = 0.0;
 SignatureController _controller =
     SignatureController(penStrokeWidth: 5, penColor: Colors.green);
 
@@ -105,14 +136,18 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     offsets.clear();
     multiwidget.clear();
     howmuchwidgetis = 0;
-    componentState = 'Square';
-    component = square();
-    squareA = Offset(0.0, 0.0);
-    squareB = Offset(0.0, 0.0);
-    radiusCenter = Offset(0.0, 0.0);
-    pointInitial = Offset(0.0, 0.0);
-    pointFinal = Offset(0.0, 0.0);
-    drawState = 'Brush';
+    componentState = PickerStateConstant.square;
+    component = SquareBottomBarContainer(bottomBarColor: widget.bottomBarColor);
+    globalSquareA = Offset(-9000, 0.0);
+    globalSquareB = Offset(-9000, 0.0);
+    globalCircleCenter = Offset(-9000, 0.0);
+    radiusCenter = Offset(-9000, 0.0);
+    pointInitial = Offset(-9000, 0.0);
+    pointFinal = Offset(-9000, 0.0);
+    squares.clear();
+    circles.clear();
+    indicators.clear();
+    drawState = PickerStateConstant.brush;
     super.initState();
   }
 
@@ -123,12 +158,15 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         key: scaf,
         appBar: AppBar(
           actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.clear),
-                onPressed: () {
-                  _controller.points.clear();
-                  setState(() {});
-                }),
+            // IconButton(
+            //     icon: Icon(Icons.clear),
+            //     onPressed: () {
+            //       _controller.points.clear();
+            //       squares = [];
+            //       circles = [];
+            //       indicators = [];
+            //       setState(() {});
+            //     }),
             IconButton(
                 icon: Icon(Icons.delete),
                 onPressed: () {
@@ -138,6 +176,16 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   offsets.clear();
                   multiwidget.clear();
                   howmuchwidgetis = 0;
+                  globalSquareA = Offset(-9000, 0);
+                  globalSquareB = Offset(-9000, 0);
+                  globalCircleCenter = Offset(-9000, 0);
+                  radiusCenter = Offset(-9000, 0);
+                  pointInitial = Offset(-9000, 0);
+                  pointFinal = Offset(-9000, 0);
+                  sizeCircle = 0;
+                  squares.clear();
+                  circles.clear();
+                  indicators.clear();
                   setState(() {});
                 }),
             IconButton(icon: Icon(Icons.check), onPressed: captureImg),
@@ -166,36 +214,49 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                               width: MediaQuery.of(context).size.width,
                               height: MediaQuery.of(context).size.height,
                             ),
-                      drawSelector(),
                       Stack(
-                        children: multiwidget.asMap().entries.map((f) {
-                          return type[f.key] == 2
-                              ? TextView(
-                                  left: offsets[f.key].dx,
-                                  top: offsets[f.key].dy,
-                                  ontap: () {
-                                    scaf.currentState
-                                        .showBottomSheet((context) {
-                                      return Sliders(
-                                        size: f.key,
-                                        sizevalue: fontsize[f.key].toDouble(),
-                                      );
-                                    });
-                                  },
-                                  onpanupdate: (details) {
-                                    setState(() {
-                                      offsets[f.key] = Offset(
-                                          offsets[f.key].dx + details.delta.dx,
-                                          offsets[f.key].dy + details.delta.dy);
-                                    });
-                                  },
-                                  value: f.value.toString(),
-                                  fontsize: fontsize[f.key].toDouble(),
-                                  align: TextAlign.center,
-                                )
-                              : Container();
-                        }).toList(),
-                      )
+                        children: [
+                          ...multiwidget.asMap().entries.map((f) {
+                            return type[f.key] == 2
+                                ? TextView(
+                                    left: offsets[f.key].dx,
+                                    top: offsets[f.key].dy,
+                                    ontap: () {
+                                      scaf.currentState
+                                          .showBottomSheet((context) {
+                                        return Sliders(
+                                          size: f.key,
+                                          sizevalue: fontsize[f.key].toDouble(),
+                                        );
+                                      });
+                                    },
+                                    onpanupdate: (details) {
+                                      setState(() {
+                                        offsets[f.key] = Offset(
+                                            offsets[f.key].dx +
+                                                details.delta.dx,
+                                            offsets[f.key].dy +
+                                                details.delta.dy);
+                                      });
+                                    },
+                                    value: f.value.toString(),
+                                    fontsize: fontsize[f.key].toDouble(),
+                                    align: TextAlign.center,
+                                  )
+                                : Container();
+                          }).toList(),
+                          Positioned(
+                            left: -9000,
+                            child: Text(squares.toString()),
+                          ),
+                          // Text(circles.toString()),
+                          circleStack,
+                          squareStack,
+                          indicatorStack,
+                          Signat(),
+                          drawSelector(),
+                        ],
+                      ),
                     ],
                   )),
             ),
@@ -212,44 +273,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   scrollDirection: Axis.horizontal,
                   children: <Widget>[
                     brush(),
-                    BottomBarContainer(
-                      icons: Icons.text_fields,
-                      ontap: () async {
-                        String value;
-
-                        await showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              content: SingleChildScrollView(
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                      labelText: "Adicione um texto"),
-                                  keyboardType: TextInputType.multiline,
-                                  onChanged: (r) => value = r,
-                                ),
-                              ),
-                              actions: <Widget>[
-                                FlatButton(
-                                  child: const Text('Salvar'),
-                                  onPressed: () {
-                                    if (value != null) {
-                                      type.add(2);
-                                      fontsize.add(20);
-                                      offsets.add(Offset.zero);
-                                      multiwidget.add(value);
-                                      howmuchwidgetis++;
-                                    }
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      title: 'Texto',
-                    ),
+                    TextBottomBarContainer(type: type, offsets: offsets),
                     BottomBarContainer(
                       icons: Icons.camera,
                       ontap: () {
@@ -260,13 +284,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                     BottomBarContainer(
                       icons: Icons.arrow_upward,
                       ontap: () {
-                        drawState = 'Arrow';
-                        _controller.clear();
-                        type.clear();
-                        fontsize.clear();
-                        offsets.clear();
-                        multiwidget.clear();
-                        howmuchwidgetis = 0;
+                        drawState = PickerStateConstant.arrow;
                       },
                       title: 'Indicador',
                     ),
@@ -274,19 +292,21 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                       onTap: () {
                         setState(() {
                           switch (componentState) {
-                            case 'Square':
-                              componentState = 'Circle';
-                              component = circle();
+                            case PickerStateConstant.square:
+                              componentState = PickerStateConstant.circle;
+                              component = CircleBottomBar(
+                                  bottomBarColor: widget.bottomBarColor);
                               setState(() {
-                                drawState = 'Circle';
+                                drawState = PickerStateConstant.circle;
                               });
                               break;
 
-                            case 'Circle':
-                              componentState = 'Square';
-                              component = square();
+                            case PickerStateConstant.circle:
+                              componentState = PickerStateConstant.square;
+                              component = SquareBottomBarContainer(
+                                  bottomBarColor: widget.bottomBarColor);
                               setState(() {
-                                drawState = 'Square';
+                                drawState = PickerStateConstant.square;
                               });
                               break;
                           }
@@ -306,13 +326,13 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       ontap: () {
         // raise the [showDialog] widget
         setState(() {
-          drawState = 'Brush';
+          drawState = PickerStateConstant.brush;
         });
         showDialog(
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: const Text('Pick a color!'),
+              title: const Text('Escolha uma cor!'),
               content: SingleChildScrollView(
                 child: ColorPicker(
                   pickerColor: pickerColor,
@@ -323,7 +343,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
               ),
               actions: <Widget>[
                 FlatButton(
-                  child: const Text('Got it'),
+                  child: const Text('Entendi'),
                   onPressed: () {
                     setState(() => currentColor = pickerColor);
                     Navigator.of(context).pop();
@@ -335,22 +355,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         );
       },
       title: 'Pincel',
-    );
-  }
-
-  Widget square() {
-    return BottomBarContainer(
-      colors: widget.bottomBarColor,
-      icons: Icons.crop_square,
-      title: 'Quadrado',
-    );
-  }
-
-  Widget circle() {
-    return BottomBarContainer(
-      colors: widget.bottomBarColor,
-      icons: Icons.circle,
-      title: 'Circulo',
     );
   }
 
@@ -475,7 +479,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
   Widget drawSelector() {
     switch (drawState) {
-      case 'Brush':
+      case PickerStateConstant.brush:
         return GestureDetector(
             onPanUpdate: (DragUpdateDetails details) {
               setState(() {
@@ -490,18 +494,18 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             },
             child: Signat());
         break;
-      case 'Square':
+      case PickerStateConstant.square:
         return GestureDetector(
           onPanDown: (DragDownDetails details) {
             print(details.localPosition);
             setState(() {
-              squareA = details.localPosition;
+              globalSquareA = details.localPosition;
             });
           },
           onPanUpdate: (DragUpdateDetails details) {
             print(details.localPosition);
             setState(() {
-              squareB = details.localPosition;
+              globalSquareB = details.localPosition;
             });
             squareStack = CustomPaint(
               painter: SquarePainter(),
@@ -509,7 +513,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             );
           },
           onPanEnd: (details) {
-            squares.add(OffsetBla(squareA, squareB));
+            squares.add(OffsetSquare(globalSquareA, globalSquareB));
             setState(() {
               squareStack = CustomPaint(
                 painter: SquarePainter(),
@@ -520,7 +524,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           child: squareStack,
         );
         break;
-      case 'Circle':
+      case PickerStateConstant.circle:
         return GestureDetector(
           onPanDown: (DragDownDetails details) {
             print(details.localPosition);
@@ -531,10 +535,25 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           onPanUpdate: (DragUpdateDetails details) {
             print(details.localPosition);
             setState(() {
-              squareB = details.localPosition;
-              sizeCircle = sqrt(pow((squareB.dy - radiusCenter.dy), 2) +
-                      pow((squareB.dx - radiusCenter.dx), 2))
+              globalCircleCenter = details.localPosition;
+              sizeCircle = sqrt(
+                      pow((globalCircleCenter.dy - radiusCenter.dy), 2) +
+                          pow((globalCircleCenter.dx - radiusCenter.dx), 2))
                   .toInt();
+            });
+            circleStack = CustomPaint(
+              painter: CirclePainter(),
+              child: Container(),
+            );
+          },
+          onPanEnd: (details) {
+            circles.add(OffsetCircle(
+                radiusCenter: radiusCenter, sizeCircle: sizeCircle));
+            setState(() {
+              circleStack = CustomPaint(
+                painter: CirclePainter(),
+                child: Container(),
+              );
             });
           },
           child: CustomPaint(
@@ -543,7 +562,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           ),
         );
         break;
-      case 'Arrow':
+      case PickerStateConstant.arrow:
         return GestureDetector(
           onPanDown: (DragDownDetails details) {
             print(details.localPosition);
@@ -556,211 +575,30 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             setState(() {
               pointFinal = details.localPosition;
             });
+            indicatorStack = CustomPaint(
+              painter: IndicatorPainter(),
+              child: Container(),
+            );
+          },
+          onPanEnd: (details) {
+            indicators.add(OffsetIndicator(
+              pointFinal: pointFinal,
+              pointInitial: pointInitial,
+            ));
+            setState(() {
+              indicatorStack = CustomPaint(
+                painter: IndicatorPainter(),
+                child: Container(),
+              );
+            });
           },
           child: CustomPaint(
-            painter: ArrowPainter(),
+            painter: IndicatorPainter(),
             child: Container(),
           ),
         );
         break;
     }
     return Container();
-  }
-}
-
-class CirclePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint()
-      ..color = Colors.teal
-      ..strokeWidth = 5
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    canvas.drawCircle(radiusCenter, sizeCircle.toDouble(), paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-}
-
-class ArrowPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Path path;
-
-    // The arrows usually looks better with rounded caps.
-    var paint = Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round
-      ..strokeWidth = 3.0;
-
-    /// Draw a single arrow.
-    path = Path();
-    path.moveTo(pointInitial.dx, pointInitial.dy);
-    path.cubicTo(pointFinal.dx, pointFinal.dy, pointFinal.dx, pointFinal.dy,
-        pointFinal.dx, pointFinal.dy);
-    path = ArrowPath.make(path: path);
-    canvas.drawPath(path, paint..color = Colors.blue);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-}
-
-class OffsetBla {
-  Offset a;
-  Offset b;
-
-  OffsetBla(this.a, this.b);
-}
-
-class SquarePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint()
-      ..color = Colors.red
-      ..strokeWidth = 5
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawRect(Rect.fromPoints(squareA, squareB), paint);
-
-    squares.forEach((offset) =>
-        canvas.drawRect(Rect.fromPoints(offset.a, offset.b), paint));
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-}
-
-class Signat extends StatefulWidget {
-  @override
-  _SignatState createState() => _SignatState();
-}
-
-class _SignatState extends State<Signat> {
-  @override
-  void initState() {
-    super.initState();
-    _controller.addListener(() => print('Value changed'));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return //SIGNATURE CANVAS
-        //SIGNATURE CANVAS
-        ListView(
-      children: <Widget>[
-        Signature(
-            controller: _controller,
-            height: height.toDouble(),
-            width: width.toDouble(),
-            backgroundColor: Colors.transparent),
-      ],
-    );
-  }
-}
-
-class Sliders extends StatefulWidget {
-  final int size;
-  final sizevalue;
-
-  const Sliders({Key key, this.size, this.sizevalue}) : super(key: key);
-
-  @override
-  _SlidersState createState() => _SlidersState();
-}
-
-class _SlidersState extends State<Sliders> {
-  @override
-  void initState() {
-    slider = widget.sizevalue;
-
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        height: 120,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text('Tamanho'),
-            ),
-            Divider(
-              height: 1,
-            ),
-            Slider(
-                value: slider,
-                min: 0.0,
-                max: 100.0,
-                onChangeEnd: (v) {
-                  setState(() {
-                    fontsize[widget.size] = v.toInt();
-                  });
-                },
-                onChanged: (v) {
-                  setState(() {
-                    slider = v;
-                    print(v.toInt());
-                    fontsize[widget.size] = v.toInt();
-                  });
-                }),
-          ],
-        ));
-  }
-}
-
-class ColorPiskersSlider extends StatefulWidget {
-  @override
-  _ColorPiskersSliderState createState() => _ColorPiskersSliderState();
-}
-
-class _ColorPiskersSliderState extends State<ColorPiskersSlider> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(20),
-      height: 260,
-      color: Colors.white,
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Text('Slider Filter Color'),
-          ),
-          Divider(
-            height: 1,
-          ),
-          SizedBox(height: 20),
-          Text('Slider Color'),
-          SizedBox(height: 10),
-          BarColorPicker(
-              width: 300,
-              thumbColor: Colors.white,
-              cornerRadius: 10,
-              pickMode: PickMode.Color,
-              colorListener: (int value) {
-                setState(() {
-                  //  currentColor = Color(value);
-                });
-              }),
-          SizedBox(height: 20),
-          Text('Slider Opicity'),
-          SizedBox(height: 10),
-          Slider(value: 0.1, min: 0.0, max: 1.0, onChanged: (v) {})
-        ],
-      ),
-    );
   }
 }
