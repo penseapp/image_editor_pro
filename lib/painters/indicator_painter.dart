@@ -7,11 +7,11 @@ class IndicatorPainter extends CustomPainter {
 
     // The arrows usually looks better with rounded caps.
     var paint = Paint()
-      ..color = Colors.black
+      ..color = selectedColor
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
-      ..strokeWidth = 3.0;
+      ..strokeWidth = selectedSize;
 
     /// Draw a single arrow.
     path = Path();
@@ -20,7 +20,7 @@ class IndicatorPainter extends CustomPainter {
         pointFinal.dx, pointFinal.dy);
     path = ArrowPath.make(path: path);
 
-    canvas.drawPath(path, paint..color = Colors.blue);
+    canvas.drawPath(path, paint..color = selectedColor..strokeWidth = selectedSize);
 
     indicators.forEach((offset) {
       path = Path();
@@ -35,7 +35,7 @@ class IndicatorPainter extends CustomPainter {
       );
       path = ArrowPath.make(path: path);
 
-      canvas.drawPath(path, paint..color = Colors.blue);
+      canvas.drawPath(path, paint..color = offset.color..strokeWidth = offset.size);
     });
   }
 

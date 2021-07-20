@@ -20,9 +20,13 @@ class OffsetCircle {
 class OffsetIndicator {
   Offset pointInitial;
   Offset pointFinal;
+  Color color;
+  double size;
 
   OffsetIndicator({
     this.pointInitial,
     this.pointFinal,
+    this.color,
+    this.size
   });
 }

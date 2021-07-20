@@ -25,6 +25,8 @@
     <list default="true" id="ee1404f7-9294-4991-a6b8-0e1e50d3acf8" name="Default Changelist" comment="update lib to run no mobile">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/image_editor_pro.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/image_editor_pro.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/painters/indicator_painter.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/painters/indicator_painter.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/utils/offset_class.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils/offset_class.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +43,6 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="show.migrate.to.gradle.popup" value="false" />
@@ -96,29 +97,29 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="768" y="272" width="374" height="569" key="#com.intellij.ide.util.MemberChooser/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626751741598" />
-    <state width="1874" height="300" key="GridCell.Tab.0.bottom" timestamp="1626752803363">
+    <state width="1874" height="300" key="GridCell.Tab.0.bottom" timestamp="1626768428032">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state width="1264" height="310" key="GridCell.Tab.0.bottom/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626667980012" />
-    <state width="1874" height="300" key="GridCell.Tab.0.bottom/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626752803363" />
+    <state width="1874" height="300" key="GridCell.Tab.0.bottom/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626768428032" />
     <state width="1874" height="310" key="GridCell.Tab.0.bottom/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707271942" />
-    <state width="1874" height="300" key="GridCell.Tab.0.center" timestamp="1626752803363">
+    <state width="1874" height="300" key="GridCell.Tab.0.center" timestamp="1626768428032">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state width="1264" height="310" key="GridCell.Tab.0.center/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626667980012" />
-    <state width="1874" height="300" key="GridCell.Tab.0.center/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626752803363" />
+    <state width="1874" height="300" key="GridCell.Tab.0.center/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626768428032" />
     <state width="1874" height="310" key="GridCell.Tab.0.center/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707271942" />
-    <state width="1874" height="300" key="GridCell.Tab.0.left" timestamp="1626752803362">
+    <state width="1874" height="300" key="GridCell.Tab.0.left" timestamp="1626768428032">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state width="1264" height="310" key="GridCell.Tab.0.left/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626667980012" />
-    <state width="1874" height="300" key="GridCell.Tab.0.left/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626752803362" />
+    <state width="1874" height="300" key="GridCell.Tab.0.left/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626768428032" />
     <state width="1874" height="310" key="GridCell.Tab.0.left/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707271942" />
-    <state width="1874" height="300" key="GridCell.Tab.0.right" timestamp="1626752803363">
+    <state width="1874" height="300" key="GridCell.Tab.0.right" timestamp="1626768428032">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state width="1264" height="310" key="GridCell.Tab.0.right/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626667980012" />
-    <state width="1874" height="300" key="GridCell.Tab.0.right/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626752803363" />
+    <state width="1874" height="300" key="GridCell.Tab.0.right/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626768428032" />
     <state width="1874" height="310" key="GridCell.Tab.0.right/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707271942" />
     <state x="689" y="284" width="540" height="524" key="StructurePopup" timestamp="1626750784848">
       <screen x="0" y="27" width="1920" height="1053" />
@@ -138,6 +139,10 @@
     </state>
     <state x="651" y="279" width="618" height="522" key="find.popup/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626662668885" />
     <state x="2571" y="279" width="618" height="522" key="find.popup/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707313514" />
+    <state x="624" y="252" key="run.anything.popup" timestamp="1626763184419">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="624" y="252" key="run.anything.popup/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626763184419" />
     <state x="305" y="260" width="672" height="662" key="search.everywhere.popup" timestamp="1626726899599">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
