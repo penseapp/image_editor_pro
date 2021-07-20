@@ -39,7 +39,7 @@ class TextBottomBarContainer extends StatelessWidget {
                       fontsize.add(20);
                       offsets.add(Offset.zero);
                       multiwidget.add(value);
-                      howmuchwidgetis++;
+                      howmuchwidgets++;
                     }
                     Navigator.of(context).pop();
                   },

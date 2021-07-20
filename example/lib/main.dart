@@ -39,13 +39,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Container(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: getimageditor,
-        child: const Icon(Icons.camera_alt),
-      ),
+    return ImageEditorPro(
+      appBarColor: Colors.blue,
+      bottomBarColor: Colors.blue,
     );
   }
 }

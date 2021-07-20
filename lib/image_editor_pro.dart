@@ -68,7 +68,7 @@ CustomPaint indicatorStack = CustomPaint(
 );
 
 List fontsize = [];
-int howmuchwidgetis = 0;
+int howmuchwidgets = 0;
 List multiwidget = [];
 Color currentcolors = Colors.white;
 double opacity = 0.0;
@@ -137,16 +137,13 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     fontsize.clear();
     offsets.clear();
     multiwidget.clear();
-    howmuchwidgetis = 0;
+    howmuchwidgets = 0;
     componentState = PickerStateConstant.square;
     component = SquareBottomBarContainer(bottomBarColor: widget.bottomBarColor);
     selectedButton = PickerStateConstant.brush;
-    globalSquareA = Offset(-9000, 0.0);
-    globalSquareB = Offset(-9000, 0.0);
-    globalCircleCenter = Offset(-9000, 0.0);
-    radiusCenter = Offset(-9000, 0.0);
-    pointInitial = Offset(-9000, 0.0);
-    pointFinal = Offset(-9000, 0.0);
+    _resetSquares();
+    _resetIndicators();
+    _resetCircles();
     squares.clear();
     circles.clear();
     indicators.clear();
@@ -165,29 +162,16 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         backgroundColor: Colors.grey,
         key: scaf,
         appBar: AppBar(
+          leading: IconButton(icon: Icon(Icons.delete), onPressed: _clearAll),
           actions: <Widget>[
             IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () {
-                  _controller.clear();
-                  type.clear();
-                  fontsize.clear();
-                  offsets.clear();
-                  multiwidget.clear();
-                  howmuchwidgetis = 0;
-                  globalSquareA = Offset(-9000, 0);
-                  globalSquareB = Offset(-9000, 0);
-                  globalCircleCenter = Offset(-9000, 0);
-                  radiusCenter = Offset(-9000, 0);
-                  pointInitial = Offset(-9000, 0);
-                  pointFinal = Offset(-9000, 0);
-                  sizeCircle = 0;
-                  squares.clear();
-                  circles.clear();
-                  indicators.clear();
-                  setState(() {});
-                }),
-            IconButton(icon: Icon(Icons.check), onPressed: captureImg),
+                icon: Icon(Icons.undo_rounded), onPressed: _revertLastAction),
+            FlatButton.icon(
+                color: Colors.transparent,
+                textColor: Colors.white,
+                onPressed: captureImg,
+                icon: Icon(Icons.save),
+                label: Text("Salvar"))
           ],
           backgroundColor: CustomColors.primary,
         ),
@@ -216,10 +200,16 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                       Stack(
                         children: [
                           Positioned(
-                            left: -9000,
-                            child: Text(squares.toString()),
-                          ),
-                          // Text(circles.toString()),
+                              left: -300,
+                              child: Column(
+                                children: [
+                                  Text(squares.length.toString()),
+                                  Text(circles.length.toString()),
+                                  Text(indicators.length.toString()),
+                                  Text(_controller.points.length.toString()),
+                                  Text(multiwidget.length.toString()),
+                                ],
+                              )),
                           circleStack,
                           squareStack,
                           indicatorStack,
@@ -274,10 +264,11 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                     brush(),
                     BottomBarContainer(
                       icons: Icons.arrow_upward,
-                      isSelected: selectedButton == PickerStateConstant.arrow,
+                      isSelected:
+                          selectedButton == PickerStateConstant.indicator,
                       ontap: () {
-                        selectedButton = PickerStateConstant.arrow;
-                        drawState = PickerStateConstant.arrow;
+                        selectedButton = PickerStateConstant.indicator;
+                        drawState = PickerStateConstant.indicator;
                       },
                       title: 'Indicador',
                     ),
@@ -303,6 +294,81 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   ],
                 ),
               ));
+  }
+
+  void _revertLastAction() {
+    switch (selectedButton) {
+      case PickerStateConstant.square:
+        squares.removeLast();
+        _resetSquares();
+        break;
+
+      case PickerStateConstant.indicator:
+        indicators.removeLast();
+
+        if (indicators.isNotEmpty) {
+          final pfinal = indicators.last.pointFinal;
+          final pinitial = indicators.last.pointInitial;
+
+          pointInitial = Offset(pinitial.dx, pinitial.dy);
+          pointFinal = Offset(pfinal.dx, pfinal.dy);
+        } else {
+          _resetIndicators();
+        }
+        break;
+
+      case PickerStateConstant.circle:
+        circles.removeLast();
+        _resetCircles();
+        break;
+
+      case PickerStateConstant.brush:
+        for (var i = 0; i < 10; i++) {
+          _controller.points.removeLast();
+        }
+        break;
+
+      case PickerStateConstant.text:
+        multiwidget.removeLast();
+        howmuchwidgets = multiwidget.length;
+        break;
+
+      default:
+        setState(() {});
+        break;
+    }
+  }
+
+  void _clearAll() {
+    _controller.clear();
+    type.clear();
+    fontsize.clear();
+    offsets.clear();
+    multiwidget.clear();
+    howmuchwidgets = 0;
+    _resetSquares();
+    _resetCircles();
+    _resetIndicators();
+    squares.clear();
+    circles.clear();
+    indicators.clear();
+    setState(() {});
+  }
+
+  void _resetIndicators() {
+    pointInitial = Offset(-9000, 0);
+    pointFinal = Offset(-9000, 0);
+  }
+
+  void _resetCircles() {
+    globalCircleCenter = Offset(-9000, 0);
+    radiusCenter = Offset(-9000, 0);
+    sizeCircle = 0;
+  }
+
+  void _resetSquares() {
+    globalSquareA = Offset(-9000, 0);
+    globalSquareB = Offset(-9000, 0);
   }
 
   Widget brush() {
@@ -549,7 +615,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           ),
         );
         break;
-      case PickerStateConstant.arrow:
+      case PickerStateConstant.indicator:
         return GestureDetector(
           onPanDown: (DragDownDetails details) {
             print(details.localPosition);
