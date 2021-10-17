@@ -18,9 +18,15 @@ class IndicatorPainter extends CustomPainter {
     path.moveTo(pointInitial.dx, pointInitial.dy);
     path.cubicTo(pointFinal.dx, pointFinal.dy, pointFinal.dx, pointFinal.dy,
         pointFinal.dx, pointFinal.dy);
-    path = ArrowPath.make(path: path);
+    try {
+      path = ArrowPath.make(path: path);
+    } catch (e) {}
 
-    canvas.drawPath(path, paint..color = selectedColor..strokeWidth = selectedSize);
+    canvas.drawPath(
+        path,
+        paint
+          ..color = selectedColor
+          ..strokeWidth = selectedSize);
 
     indicators.forEach((offset) {
       path = Path();
@@ -35,7 +41,11 @@ class IndicatorPainter extends CustomPainter {
       );
       path = ArrowPath.make(path: path);
 
-      canvas.drawPath(path, paint..color = offset.color..strokeWidth = offset.size);
+      canvas.drawPath(
+          path,
+          paint
+            ..color = offset.color
+            ..strokeWidth = offset.size);
     });
   }
 
