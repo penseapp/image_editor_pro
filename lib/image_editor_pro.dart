@@ -3,10 +3,8 @@ library image_editor_pro;
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:arrow_path/arrow_path.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_editor_pro/constants/picker_state_constant.dart';
@@ -19,12 +17,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
-import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
-import 'package:flutter/rendering.dart';
 
 part 'painters/circle_painter.dart';
 part 'painters/indicator_painter.dart';
-part 'painters/points_painter.dart';
 part 'painters/square_painter.dart';
 part 'widgets/bottom_navigation_bar/circle_bottom_bar_container.dart';
 part 'widgets/bottom_navigation_bar/square_bottom_bar_container.dart';
@@ -52,12 +47,6 @@ double selectedSize = 5;
 var componentState;
 var component;
 var drawState;
-
-List<Offset> points = <Offset>[];
-CustomPaint pointsStack = CustomPaint(
-  painter: PointsPainter(),
-  child: Container(),
-);
 
 List<OffsetSquare> squares = [];
 CustomPaint squareStack = CustomPaint(
@@ -115,7 +104,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   Offset offset2 = Offset.zero;
   final scaf = GlobalKey<ScaffoldState>();
   var openbottomsheet = false;
-  // List<Offset> points = <Offset>[];
+  List<Offset> _points = <Offset>[];
   List type = [];
   List aligment = [];
 
@@ -156,7 +145,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     _resetCircles();
     squares.clear();
     circles.clear();
-    points.clear();
     indicators.clear();
     selectedColor = Colors.black;
     selectedSize = 5;
@@ -220,9 +208,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   left: -300,
                                   child: Column(
                                     children: [
-                                      // Text(squares.length.toString()),
-                                      // Text(circles.length.toString()),
-                                      // Text(indicators.length.toString()),
+                                      Text(squares.length.toString()),
+                                      Text(circles.length.toString()),
+                                      Text(indicators.length.toString()),
                                       Text(
                                           _controller.points.length.toString()),
                                       Text(multiwidget.length.toString()),
@@ -230,7 +218,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   )),
                               circleStack,
                               squareStack,
-                              pointsStack,
                               indicatorStack,
                               Signat(),
                               drawSelector(),
@@ -293,119 +280,122 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                 ),
               ),
             ),*/
-            Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Wrap(
-                  direction: Axis.vertical,
-                  spacing: 20,
-                  children: [
-                    Stack(
-                      children: [
-                        if (selectedColor == CustomColors.riskExtremely3)
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.circle_outlined,
-                              size: 32,
+            Visibility(
+              visible: selectedButton != PickerStateConstant.brush,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Wrap(
+                    direction: Axis.vertical,
+                    spacing: 20,
+                    children: [
+                      Stack(
+                        children: [
+                          if (selectedColor == CustomColors.riskExtremely3)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.circle_outlined,
+                                size: 32,
+                              ),
                             ),
-                          ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.circle,
-                            color: CustomColors.riskExtremely3,
-                            size: selectedColor == CustomColors.riskExtremely3
-                                ? 20
-                                : 24,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              selectedColor = CustomColors.riskExtremely3;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      children: [
-                        if (selectedColor == CustomColors.riskHigh3)
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.circle_outlined,
-                              size: 32,
+                          IconButton(
+                            icon: Icon(
+                              Icons.circle,
+                              color: CustomColors.riskExtremely3,
+                              size: selectedColor == CustomColors.riskExtremely3
+                                  ? 20
+                                  : 24,
                             ),
+                            onPressed: () {
+                              setState(() {
+                                selectedColor = CustomColors.riskExtremely3;
+                              });
+                            },
                           ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.circle,
-                            color: CustomColors.riskHigh3,
-                            size: selectedColor == CustomColors.riskHigh3
-                                ? 20
-                                : 24,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              selectedColor = CustomColors.riskHigh3;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      children: [
-                        if (selectedColor == CustomColors.riskLow3)
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.circle_outlined,
-                              size: 32,
+                        ],
+                      ),
+                      Stack(
+                        children: [
+                          if (selectedColor == CustomColors.riskHigh3)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.circle_outlined,
+                                size: 32,
+                              ),
                             ),
-                          ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.circle,
-                            color: CustomColors.riskLow3,
-                            size: selectedColor == CustomColors.riskLow3
-                                ? 20
-                                : 24,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              selectedColor = CustomColors.riskLow3;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      children: [
-                        if (selectedColor == CustomColors.riskMedium3)
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.circle_outlined,
-                              size: 32,
+                          IconButton(
+                            icon: Icon(
+                              Icons.circle,
+                              color: CustomColors.riskHigh3,
+                              size: selectedColor == CustomColors.riskHigh3
+                                  ? 20
+                                  : 24,
                             ),
+                            onPressed: () {
+                              setState(() {
+                                selectedColor = CustomColors.riskHigh3;
+                              });
+                            },
                           ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.circle,
-                            color: CustomColors.riskMedium3,
-                            size: selectedColor == CustomColors.riskMedium3
-                                ? 20
-                                : 24,
+                        ],
+                      ),
+                      Stack(
+                        children: [
+                          if (selectedColor == CustomColors.riskLow3)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.circle_outlined,
+                                size: 32,
+                              ),
+                            ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.circle,
+                              color: CustomColors.riskLow3,
+                              size: selectedColor == CustomColors.riskLow3
+                                  ? 20
+                                  : 24,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                selectedColor = CustomColors.riskLow3;
+                              });
+                            },
                           ),
-                          onPressed: () {
-                            setState(() {
-                              selectedColor = CustomColors.riskMedium3;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                      Stack(
+                        children: [
+                          if (selectedColor == CustomColors.riskMedium3)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.circle_outlined,
+                                size: 32,
+                              ),
+                            ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.circle,
+                              color: CustomColors.riskMedium3,
+                              size: selectedColor == CustomColors.riskMedium3
+                                  ? 20
+                                  : 24,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                selectedColor = CustomColors.riskMedium3;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -670,31 +660,17 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       case PickerStateConstant.brush:
         return GestureDetector(
             onPanUpdate: (DragUpdateDetails details) {
-              print("points" + context.findRenderObject().toString());
               setState(() {
                 RenderBox object = context.findRenderObject();
                 var _localPosition =
                     object.globalToLocal(details.globalPosition);
-                points = List.from(points)..add(_localPosition);
+                _points = List.from(_points)..add(_localPosition);
               });
             },
             onPanEnd: (DragEndDetails details) {
-              points.add(null);
+              _points.add(null);
             },
-            child: SfSignaturePad(
-              strokeColor: selectedColor ?? Colors.black,
-              minimumStrokeWidth: 5,
-              onDrawEnd: () => points.add(null),
-              onDraw: (offset, time) {
-                debugPrint(offset.toString());
-                setState(() {
-                  RenderBox object = context.findRenderObject();
-                  // var _localPosition =
-                  //     object.globalToLocal(details.globalPosition);
-                  points = List.from(points)..add(offset);
-                });
-              },
-            ));
+            child: Signat());
         break;
       case PickerStateConstant.square:
         return GestureDetector(
