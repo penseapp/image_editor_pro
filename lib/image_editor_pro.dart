@@ -43,6 +43,7 @@ int sizeCircle = 0;
 String selectedButton;
 Color selectedColor = CustomColors.riskExtremely3;
 double selectedSize = 5;
+bool isLoadingImage = false;
 
 var componentState;
 var component;
@@ -180,14 +181,15 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         ),
         body: Stack(
           children: [
-            Center(
-              child: Screenshot(
-                controller: screenshotController,
-                child: Container(
-                  color: Colors.white,
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child: RepaintBoundary(
+            Stack(
+              children: [
+                Screenshot(
+                  controller: screenshotController,
+                  child: Container(
+                    color: Colors.white,
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    child: RepaintBoundary(
                       key: globalKey,
                       child: Stack(
                         children: <Widget>[
@@ -253,10 +255,18 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                               }).toList(),
                             ],
                           ),
+                          Center(
+                            child: Visibility(
+                              visible: isLoadingImage,
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
                         ],
-                      )),
-                ),
-              ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
             ),
             /*Align(
               alignment: Alignment.bottomCenter,
@@ -605,6 +615,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                 onPressed: () async {
                                   var image = await picker.getImage(
                                       source: ImageSource.camera);
+
+                                  isLoadingImage = true;
+                                  Navigator.pop(context);
+
                                   var decodedImage = await decodeImageFromList(
                                       File(image.path).readAsBytesSync());
 
@@ -614,7 +628,11 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                     _image = File(image.path);
                                   });
                                   setState(() => _controller.clear());
-                                  Navigator.pop(context);
+                                  await Future.delayed(Duration(seconds: 1),
+                                      () {
+                                    isLoadingImage = false;
+                                    setState(() {});
+                                  });
                                 }),
                             SizedBox(width: 10),
                             Text('Abrir Camera')
@@ -635,6 +653,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
   void _closeModal(void value) {
     openbottomsheet = false;
+    // isLoadingImage = false;
     setState(() {});
   }
 
