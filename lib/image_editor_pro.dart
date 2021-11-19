@@ -166,7 +166,25 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         backgroundColor: Colors.grey,
         key: scaf,
         appBar: AppBar(
-          leading: IconButton(icon: Icon(Icons.delete), onPressed: _clearAll),
+          leadingWidth: MediaQuery.of(context).size.width * 0.5,
+          leading: TextButton(
+            onPressed: _clearAll,
+            child: Row(
+              children: [
+                Icon(
+                  Icons.delete_outline,
+                  color: Colors.white,
+                  size: 14,
+                ),
+                Text(
+                  'Excluir desenhos',
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            ),
+            // icon: Icon(Icons.delete_outline),
+            // label: Text("Excluir desenhos")
+          ),
           actions: <Widget>[
             IconButton(
                 icon: Icon(Icons.undo_rounded), onPressed: _revertLastAction),
@@ -175,7 +193,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                 textColor: Colors.white,
                 onPressed: captureImg,
                 icon: Icon(Icons.save),
-                label: Text("Salvar"))
+                label: Text('Salvar'))
           ],
           backgroundColor: CustomColors.primary,
         ),
@@ -583,8 +601,11 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                               IconButton(
                                   icon: Icon(Icons.photo_library),
                                   onPressed: () async {
+                                    isLoadingImage = true;
+                                    Navigator.pop(context);
                                     var image = await picker.getImage(
                                         source: ImageSource.gallery);
+
                                     var decodedImage =
                                         await decodeImageFromList(
                                             File(image.path).readAsBytesSync());
@@ -595,7 +616,11 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                       _image = File(image.path);
                                     });
                                     setState(() => _controller.clear());
-                                    Navigator.pop(context);
+                                    await Future.delayed(Duration(seconds: 1),
+                                        () {
+                                      isLoadingImage = false;
+                                      setState(() {});
+                                    });
                                   }),
                               SizedBox(width: 10),
                               Text('Selecionar Foto')
@@ -613,11 +638,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                             IconButton(
                                 icon: Icon(Icons.camera_alt),
                                 onPressed: () async {
-                                  var image = await picker.getImage(
-                                      source: ImageSource.camera);
-
                                   isLoadingImage = true;
                                   Navigator.pop(context);
+                                  var image = await picker.getImage(
+                                      source: ImageSource.camera);
 
                                   var decodedImage = await decodeImageFromList(
                                       File(image.path).readAsBytesSync());
