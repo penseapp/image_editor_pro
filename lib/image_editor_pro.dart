@@ -174,7 +174,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                 Icon(
                   Icons.delete_outline,
                   color: Colors.white,
-                  size: 14,
                 ),
                 Text(
                   'Excluir desenhos',
