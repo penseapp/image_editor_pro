@@ -1,5 +1,8 @@
 part of image_editor_pro;
 
+const double STROKE = 18.0;
+const double ARROW_ANGLE = 75.0;
+
 class IndicatorPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -19,14 +22,19 @@ class IndicatorPainter extends CustomPainter {
     path.cubicTo(pointFinal.dx, pointFinal.dy, pointFinal.dx, pointFinal.dy,
         pointFinal.dx, pointFinal.dy);
     try {
-      path = ArrowPath.make(path: path);
+      path = ArrowPath.make(
+        path: path,
+        tipAngle: ARROW_ANGLE,
+        tipLength: ARROW_ANGLE,
+        isAdjusted: true,
+      );
     } catch (e) {}
 
     canvas.drawPath(
         path,
         paint
           ..color = selectedColor
-          ..strokeWidth = selectedSize);
+          ..strokeWidth = STROKE);
 
     indicators.forEach((offset) {
       path = Path();
@@ -39,13 +47,18 @@ class IndicatorPainter extends CustomPainter {
         offset.pointFinal.dx,
         offset.pointFinal.dy,
       );
-      path = ArrowPath.make(path: path);
+      path = ArrowPath.make(
+        path: path,
+        tipAngle: ARROW_ANGLE,
+        tipLength: ARROW_ANGLE,
+        isAdjusted: true,
+      );
 
       canvas.drawPath(
           path,
           paint
             ..color = offset.color
-            ..strokeWidth = offset.size);
+            ..strokeWidth = STROKE);
     });
   }
 
