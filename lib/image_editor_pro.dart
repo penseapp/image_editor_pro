@@ -159,40 +159,62 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     width = MediaQuery.of(context).size.width;
     return Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: bottomsheets,
-          backgroundColor: CustomColors.primary,
+          onPressed: isLoadingImage ? null : bottomsheets,
+          backgroundColor: isLoadingImage ? Colors.grey : CustomColors.primary,
           child: const Icon(Icons.camera_alt),
         ),
         backgroundColor: Colors.grey,
         key: scaf,
         appBar: AppBar(
           leadingWidth: MediaQuery.of(context).size.width * 0.5,
-          leading: TextButton(
-            onPressed: _clearAll,
-            child: Row(
-              children: [
-                Icon(
-                  Icons.delete_outline,
-                  color: Colors.white,
-                ),
-                Text(
-                  'Excluir desenhos',
-                  style: TextStyle(color: Colors.white),
+          leading: !isLoadingImage
+              ? TextButton(
+                  onPressed: isLoadingImage ? null : _clearAll,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.delete_outline,
+                        color: Colors.white,
+                      ),
+                      Text(
+                        'Excluir desenhos',
+                        style: TextStyle(color: Colors.white),
+                      )
+                    ],
+                  ),
+                  // icon: Icon(Icons.delete_outline),
+                  // label: Text("Excluir desenhos")
                 )
-              ],
-            ),
-            // icon: Icon(Icons.delete_outline),
-            // label: Text("Excluir desenhos")
-          ),
+              : SizedBox(),
           actions: <Widget>[
             IconButton(
-                icon: Icon(Icons.undo_rounded), onPressed: _revertLastAction),
-            FlatButton.icon(
-                color: Colors.transparent,
-                textColor: Colors.white,
-                onPressed: captureImg,
-                icon: Icon(Icons.save),
-                label: Text('Salvar'))
+              icon: Icon(Icons.undo_rounded),
+              onPressed: isLoadingImage ? null : _revertLastAction,
+            ),
+            if (!isLoadingImage)
+              FlatButton.icon(
+                  color: Colors.transparent,
+                  textColor: Colors.white,
+                  onPressed: captureImg,
+                  icon: Icon(Icons.save),
+                  label: Text('Salvar'))
+            else
+              Row(
+                children: [
+                  SizedBox(width: 10),
+                  SizedBox(
+                    height: 15,
+                    width: 15,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Text('Salvando...'),
+                  SizedBox(width: 10),
+                ],
+              )
           ],
           backgroundColor: CustomColors.primary,
         ),
@@ -308,7 +330,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
               ),
             ),*/
             Visibility(
-              visible: selectedButton != PickerStateConstant.brush,
+              visible: !isLoadingImage &&
+                  selectedButton != PickerStateConstant.brush,
               child: Align(
                 alignment: Alignment.centerRight,
                 child: Padding(
@@ -550,15 +573,17 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
   Widget brush() {
     return BottomBarContainer(
-      colors: widget.bottomBarColor,
+      colors: !isLoadingImage ? Colors.grey : widget.bottomBarColor,
       icons: Icons.brush,
       isSelected: selectedButton == PickerStateConstant.brush,
-      ontap: () {
-        setState(() {
-          selectedButton = PickerStateConstant.brush;
-          drawState = PickerStateConstant.brush;
-        });
-      },
+      ontap: isLoadingImage
+          ? null
+          : () {
+              setState(() {
+                selectedButton = PickerStateConstant.brush;
+                drawState = PickerStateConstant.brush;
+              });
+            },
       title: 'Pincel',
     );
   }
