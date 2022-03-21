@@ -717,35 +717,34 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     });
 
     // Future await 10 seconds
-    Future.delayed(Duration(seconds: 10), () {
-      screenshotController
-          .capture(delay: Duration(milliseconds: 500), pixelRatio: 1.5)
-          .then((File image) async {
-        //print("Capture Done");
 
-        final paths = await getExternalStorageDirectory();
-        await image.copy(paths.path +
-            '/' +
-            DateTime.now().millisecondsSinceEpoch.toString() +
-            '.png');
+    screenshotController
+        .capture(delay: Duration(milliseconds: 500), pixelRatio: 1.5)
+        .then((File image) async {
+      //print("Capture Done");
 
-        setState(() {
-          isLoadingImage = false;
-          showLoadingProgress = true;
-        });
+      final paths = await getExternalStorageDirectory();
+      await image.copy(paths.path +
+          '/' +
+          DateTime.now().millisecondsSinceEpoch.toString() +
+          '.png');
 
-        Navigator.pop(context, image);
-      }).catchError((onError) {
-        print(onError);
-        setState(() {
-          isLoadingImage = false;
-          showLoadingProgress = true;
-        });
-      }).whenComplete(() {
-        setState(() {
-          isLoadingImage = false;
-          showLoadingProgress = true;
-        });
+      setState(() {
+        isLoadingImage = false;
+        showLoadingProgress = true;
+      });
+
+      Navigator.pop(context, image);
+    }).catchError((onError) {
+      print(onError);
+      setState(() {
+        isLoadingImage = false;
+        showLoadingProgress = true;
+      });
+    }).whenComplete(() {
+      setState(() {
+        isLoadingImage = false;
+        showLoadingProgress = true;
       });
     });
   }
