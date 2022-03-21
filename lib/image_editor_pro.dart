@@ -706,6 +706,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   }
 
   void captureImg() {
+    isLoadingImage = true;
+    setState(() {});
+
     screenshotController
         .capture(delay: Duration(milliseconds: 500), pixelRatio: 1.5)
         .then((File image) async {
@@ -716,9 +719,16 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           '/' +
           DateTime.now().millisecondsSinceEpoch.toString() +
           '.png');
+
+      isLoadingImage = true;
+      setState(() {});
+
       Navigator.pop(context, image);
     }).catchError((onError) {
       print(onError);
+    }).whenComplete(() {
+      isLoadingImage = false;
+      setState(() {});
     });
   }
 
