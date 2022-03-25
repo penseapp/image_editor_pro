@@ -7,6 +7,7 @@ import 'dart:math';
 import 'package:arrow_path/arrow_path.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_editor_pro/constants/picker_state_constant.dart';
 import 'package:image_editor_pro/modules/bottombar_container.dart';
 import 'package:image_editor_pro/modules/colors_picker.dart';
@@ -17,6 +18,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 part 'painters/circle_painter.dart';
 part 'painters/indicator_painter.dart';
@@ -724,10 +726,32 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       //print("Capture Done");
 
       final paths = await getExternalStorageDirectory();
-      await image.copy(paths.path +
+      final _path = paths.path +
           '/' +
           DateTime.now().millisecondsSinceEpoch.toString() +
-          '.png');
+          '.jpg';
+
+      if (image != null && image.path != null) {
+        final decodedImage = await decodeImageFromList(image.readAsBytesSync());
+        final scale = calcScale(
+          srcWidth: decodedImage.width.toDouble(),
+          srcHeight: decodedImage.height.toDouble(),
+          minWidth: 500,
+          minHeight: 892,
+        );
+
+        final result = await FlutterImageCompress.compressAndGetFile(
+          image.path,
+          _path,
+          quality: 88,
+          format: CompressFormat.jpeg,
+          minWidth: decodedImage.width ~/ scale,
+          minHeight: decodedImage.height ~/ scale,
+        );
+
+        await GallerySaver.saveImage(result.path);
+        await image.copy(result.path);
+      }
 
       setState(() {
         isLoadingImage = false;
@@ -878,4 +902,18 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     }
     return Container();
   }
+}
+
+double calcScale({
+  double srcWidth,
+  double srcHeight,
+  double minWidth,
+  double minHeight,
+}) {
+  var scaleW = srcWidth / minWidth;
+  var scaleH = srcHeight / minHeight;
+
+  var scale = max(1.0, min(scaleW, scaleH));
+
+  return scale;
 }
