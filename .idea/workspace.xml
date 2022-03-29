@@ -23,11 +23,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee1404f7-9294-4991-a6b8-0e1e50d3acf8" name="Default Changelist" comment="update lib to run no mobile">
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/image_editor_pro.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/image_editor_pro.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/painters/circle_painter.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/painters/circle_painter.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/painters/square_painter.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/painters/square_painter.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/utils/offset_class.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils/offset_class.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +42,9 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectId" id="1vVZx8OoZVZ0cXI8Zdkhxt3YEoR" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -49,12 +52,18 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cidr.known.project.marker" value="true" />
     <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="show.migrate.to.gradle.popup" value="false" />
+    <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Flutter.main.dart">
     <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
       <option name="filePath" value="$PROJECT_DIR$/example/lib/main.dart" />
       <method v="2" />
@@ -68,6 +77,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1626649459166</updated>
+      <workItem from="1648587249222" duration="200000" />
     </task>
     <task id="LOCAL-00001" summary="update lib to run no mobile">
       <created>1626651861965</created>
@@ -78,6 +88,9 @@
     </task>
     <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -95,73 +108,30 @@
     <MESSAGE value="update lib to run no mobile" />
     <option name="LAST_COMMIT_MESSAGE" value="update lib to run no mobile" />
   </component>
-  <component name="WindowStateProjectService">
-    <state x="418" y="198" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1626653933873">
-      <screen x="0" y="0" width="1920" height="1080" />
-    </state>
-    <state x="418" y="198" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626653933873" />
-    <state x="768" y="272" width="374" height="569" key="#com.intellij.ide.util.MemberChooser" timestamp="1626751741598">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="768" y="272" width="374" height="569" key="#com.intellij.ide.util.MemberChooser/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626751741598" />
-    <state width="1874" height="300" key="GridCell.Tab.0.bottom" timestamp="1626771897538">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state width="1264" height="310" key="GridCell.Tab.0.bottom/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626667980012" />
-    <state width="1874" height="300" key="GridCell.Tab.0.bottom/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626771897538" />
-    <state width="1874" height="310" key="GridCell.Tab.0.bottom/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707271942" />
-    <state width="1874" height="300" key="GridCell.Tab.0.center" timestamp="1626771897538">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state width="1264" height="310" key="GridCell.Tab.0.center/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626667980012" />
-    <state width="1874" height="300" key="GridCell.Tab.0.center/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626771897538" />
-    <state width="1874" height="310" key="GridCell.Tab.0.center/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707271942" />
-    <state width="1874" height="300" key="GridCell.Tab.0.left" timestamp="1626771897538">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state width="1264" height="310" key="GridCell.Tab.0.left/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626667980012" />
-    <state width="1874" height="300" key="GridCell.Tab.0.left/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626771897538" />
-    <state width="1874" height="310" key="GridCell.Tab.0.left/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707271942" />
-    <state width="1874" height="300" key="GridCell.Tab.0.right" timestamp="1626771897538">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state width="1264" height="310" key="GridCell.Tab.0.right/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626667980012" />
-    <state width="1874" height="300" key="GridCell.Tab.0.right/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626771897538" />
-    <state width="1874" height="310" key="GridCell.Tab.0.right/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707271942" />
-    <state x="182" y="121" width="1536" height="879" key="MergeDialog" timestamp="1626768981812">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="182" y="121" width="1536" height="879" key="MergeDialog/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626768981812" />
-    <state x="591" y="316" width="728" height="482" key="MultipleFileMergeDialog" timestamp="1626768981813">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="591" y="316" width="728" height="482" key="MultipleFileMergeDialog/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626768981813" />
-    <state x="689" y="284" width="540" height="524" key="StructurePopup" timestamp="1626750784848">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="689" y="284" width="540" height="524" key="StructurePopup/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626750784848" />
-    <state x="555" y="296" width="800" height="535" key="Vcs.Push.Dialog.v2" timestamp="1626752091624">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="555" y="276" width="800" height="535" key="Vcs.Push.Dialog.v2/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626651863431" />
-    <state x="555" y="296" key="Vcs.Push.Dialog.v2/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626752091624" />
-    <state x="100" y="127" width="1720" height="853" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1626749121497">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="100" y="127" width="1720" height="853" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626749121497" />
-    <state x="2571" y="279" width="618" height="522" key="find.popup" timestamp="1626707313514">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state x="651" y="279" width="618" height="522" key="find.popup/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626662668885" />
-    <state x="2571" y="279" width="618" height="522" key="find.popup/0.27.1920.1053/1920.0.1920.1080@1920.0.1920.1080" timestamp="1626707313514" />
-    <state x="624" y="252" key="run.anything.popup" timestamp="1626763184419">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="624" y="252" key="run.anything.popup/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626763184419" />
-    <state x="305" y="260" width="672" height="662" key="search.everywhere.popup" timestamp="1626772183519">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="305" y="239" width="672" height="678" key="search.everywhere.popup/0.1080.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1626666564728" />
-    <state x="305" y="260" width="672" height="662" key="search.everywhere.popup/0.27.1920.1053/1920.0.1920.1080@0.27.1920.1053" timestamp="1626772183519" />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/image_editor_pro.dart</url>
+          <line>644</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/image_editor_pro.dart</url>
+          <line>757</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/image_editor_pro.dart</url>
+          <line>758</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/image_editor_pro.dart</url>
+          <line>761</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
