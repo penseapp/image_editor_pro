@@ -7,6 +7,7 @@ import 'dart:math';
 import 'package:arrow_path/arrow_path.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_editor_pro/constants/picker_state_constant.dart';
 import 'package:image_editor_pro/modules/bottombar_container.dart';
@@ -18,7 +19,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 part 'painters/circle_painter.dart';
 part 'painters/indicator_painter.dart';
@@ -674,20 +674,26 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   var image = await picker.getImage(
                                       source: ImageSource.camera);
 
-                                  var decodedImage = await decodeImageFromList(
-                                      File(image.path).readAsBytesSync());
-
-                                  setState(() {
-                                    height = decodedImage.height.toDouble();
-                                    width = decodedImage.width.toDouble();
-                                    _image = File(image.path);
-                                  });
-                                  setState(() => _controller.clear());
-                                  await Future.delayed(Duration(seconds: 1),
-                                      () {
+                                  if (image == null) {
                                     isLoadingImage = false;
                                     setState(() {});
-                                  });
+                                  } else {
+                                    var decodedImage =
+                                        await decodeImageFromList(
+                                            File(image.path).readAsBytesSync());
+
+                                    setState(() {
+                                      height = decodedImage.height.toDouble();
+                                      width = decodedImage.width.toDouble();
+                                      _image = File(image.path);
+                                    });
+                                    setState(() => _controller.clear());
+                                    await Future.delayed(Duration(seconds: 1),
+                                        () {
+                                      isLoadingImage = false;
+                                      setState(() {});
+                                    });
+                                  }
                                 }),
                             SizedBox(width: 10),
                             Text('Abrir Camera')
