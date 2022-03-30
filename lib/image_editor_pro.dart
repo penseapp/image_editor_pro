@@ -17,6 +17,7 @@ import 'package:image_editor_pro/theme/colors.dart';
 import 'package:image_editor_pro/utils/offset_class.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
 
@@ -117,6 +118,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   File _image;
   ScreenshotController screenshotController = ScreenshotController();
   Timer timeprediction;
+  bool hasAllPermissions = false;
 
   void timers() {
     Timer.periodic(Duration(milliseconds: 10), (tim) {
@@ -130,6 +132,28 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     timeprediction.cancel();
 
     super.dispose();
+  }
+
+  Future<bool> checkAllPermissions() async {
+    // Check if has permission to access mediaLibrary
+    // if (await Permission.mediaLibrary.status != PermissionStatus.granted) {
+    //   await Permission.mediaLibrary.request();
+    // }
+
+    if (await Permission.storage.status != PermissionStatus.granted) {
+      await Permission.storage.request();
+    }
+
+    return await Permission.storage.status == PermissionStatus.granted;
+
+    // if (await Permission.accessMediaLocation.status !=
+    //     PermissionStatus.granted) {
+    //   await Permission.accessMediaLocation.request();
+    // }
+
+    // if (await Permission.camera.status != PermissionStatus.granted) {
+    //   await Permission.camera.request();
+    // }
   }
 
   @override
@@ -154,12 +178,76 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     selectedSize = 5;
     drawState = PickerStateConstant.brush;
     super.initState();
+
+    checkAllPermissions().then((value) {
+      setState(() {
+        hasAllPermissions = value;
+      });
+    });
+  }
+
+  void setPermission() async {
+    if (await checkAllPermissions()) {
+      setState(() {
+        hasAllPermissions = true;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
+
+    if (!hasAllPermissions) {
+      return Scaffold(
+        appBar: AppBar(
+          // back button navigator.pop
+          title: const Text('Câmera'),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            tooltip: 'Voltar',
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        body: Center(
+          child: Wrap(
+            // vertical
+            direction: Axis.vertical,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            runSpacing: 20,
+            spacing: 20,
+            children: [
+              Icon(
+                Icons.close,
+                color: Colors.red,
+                size: 120,
+              ),
+              Text(
+                'Sem permissão',
+                style: TextStyle(
+                  fontSize: 28,
+                  color: Colors.black,
+                ),
+              ),
+              Text('Você precisa habilitar as permissões para usar a câmera',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  )),
+              ElevatedButton(
+                child: Text("Habilitar permissão"),
+                onPressed: setPermission,
+              )
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: isLoadingImage ? null : bottomsheets,
@@ -755,7 +843,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           minHeight: decodedImage.height ~/ scale,
         );
 
-        await GallerySaver.saveImage(result.path);
+        if (await checkAllPermissions()) {
+          await GallerySaver.saveImage(result.path);
+        }
+
         await image.copy(result.path);
       }
 
