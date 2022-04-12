@@ -722,18 +722,28 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   onPressed: () async {
                                     isLoadingImage = true;
                                     Navigator.pop(context);
-                                    var image = await picker.getImage(
-                                        source: ImageSource.gallery);
 
-                                    var decodedImage =
-                                        await decodeImageFromList(
-                                            File(image.path).readAsBytesSync());
+                                    try {
+                                      var image = await picker.getImage(
+                                          source: ImageSource.gallery);
 
-                                    setState(() {
-                                      height = decodedImage.height.toDouble();
-                                      width = decodedImage.width.toDouble();
-                                      _image = File(image.path);
-                                    });
+                                      if (image?.path != null) {
+                                        var decodedImage =
+                                            await decodeImageFromList(
+                                                File(image.path)
+                                                    .readAsBytesSync());
+
+                                        setState(() {
+                                          height =
+                                              decodedImage.height.toDouble();
+                                          width = decodedImage.width.toDouble();
+                                          _image = File(image.path);
+                                        });
+                                      }
+                                    } catch (e) {
+                                      print('error: $e');
+                                    }
+
                                     setState(() => _controller.clear());
                                     await Future.delayed(Duration(seconds: 1),
                                         () {
