@@ -21,6 +21,7 @@ class Signature extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 5.0;
 
+    var newPoints;
     for (var i = 0; i < newPoints.length - 1; i++) {
       paint.color = points[i].color;
       if (points[i].offset != null && points[i + 1].offset != null) {
