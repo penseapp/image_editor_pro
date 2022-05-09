@@ -274,7 +274,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.4.1+8"
+    version: "2.0.0+9"
   image_gallery_saver:
     dependency: transitive
     description:
