@@ -769,29 +769,32 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                           children: <Widget>[
                             IconButton(
                                 icon: Icon(Icons.camera_alt),
-                                onPressed: () async {
-                                  isLoadingImage = true;
-                                  Navigator.pop(context);
-                                  var image = await picker.getImage(source: ImageSource.camera);
+                                onPressed: kIsWeb
+                                    ? null
+                                    : () async {
+                                        isLoadingImage = true;
+                                        Navigator.pop(context);
+                                        var image = await picker.getImage(source: ImageSource.camera);
 
-                                  if (image == null) {
-                                    isLoadingImage = false;
-                                    setState(() {});
-                                  } else {
-                                    var decodedImage = await decodeImageFromList(File(image.path).readAsBytesSync());
+                                        if (image == null) {
+                                          isLoadingImage = false;
+                                          setState(() {});
+                                        } else {
+                                          var decodedImage =
+                                              await decodeImageFromList(File(image.path).readAsBytesSync());
 
-                                    setState(() {
-                                      height = decodedImage.height.toDouble();
-                                      width = decodedImage.width.toDouble();
-                                      _image = File(image.path);
-                                    });
-                                    setState(() => _controller.clear());
-                                    await Future.delayed(Duration(seconds: 1), () {
-                                      isLoadingImage = false;
-                                      setState(() {});
-                                    });
-                                  }
-                                }),
+                                          setState(() {
+                                            height = decodedImage.height.toDouble();
+                                            width = decodedImage.width.toDouble();
+                                            _image = File(image.path);
+                                          });
+                                          setState(() => _controller.clear());
+                                          await Future.delayed(Duration(seconds: 1), () {
+                                            isLoadingImage = false;
+                                            setState(() {});
+                                          });
+                                        }
+                                      }),
                             SizedBox(width: 10),
                             Text('Abrir Camera')
                           ],
