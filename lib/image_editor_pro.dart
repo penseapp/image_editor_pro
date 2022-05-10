@@ -19,7 +19,7 @@ import 'package:image_editor_pro/modules/textview.dart';
 import 'package:image_editor_pro/theme/colors.dart';
 import 'package:image_editor_pro/utils/offset_class.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'package:image_picker_web/image_picker_web.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
@@ -721,14 +721,14 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                     Navigator.pop(context);
 
                                     if (kIsWeb) {
-                                      // final fromPicker = await ImagePickerWeb.getImageAsWidget();
+                                      final fromPicker = await ImagePickerWeb.getImageAsWidget();
 
-                                      // if (fromPicker != null) {
-                                      //   setState(() {
-                                      //     isLoadingImage = false;
-                                      //     _imageWeb = fromPicker;
-                                      //   });
-                                      // }
+                                      if (fromPicker != null) {
+                                        setState(() {
+                                          isLoadingImage = false;
+                                          _imageWeb = fromPicker;
+                                        });
+                                      }
                                     } else {
                                       try {
                                         var image = await picker.getImage(source: ImageSource.gallery);
