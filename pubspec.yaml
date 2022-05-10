@@ -1,6 +1,6 @@
-name: image_editor_web
+name: image_editor_pro
 description: Image Editor Plugin with simple, easy support for image editing using paints,text and emoji like stories.
-version: 2.0.2+11
+version: 2.0.3+12
 homepage: https://github.com/zeeshux7860/Image_editor_pro_package
 
 environment:
