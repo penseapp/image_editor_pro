@@ -4,4 +4,5 @@ class PickerStateConstant {
   static const circle = 'Circle';
   static const indicator = 'Arrow';
   static const text = 'Text';
+  static const dragAndDrop = 'Drag and Drop';
 }

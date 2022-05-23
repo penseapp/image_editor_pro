@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:arrow_path/arrow_path.dart';
@@ -25,6 +26,12 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
 
+import 'package:image_cropper/image_cropper.dart';
+
+import 'cropper/ui_helper.dart'
+    if (dart.library.io) 'cropper/mobile_ui_helper.dart'
+    if (dart.library.html) 'cropper/web_ui_helper.dart';
+
 part 'painters/circle_painter.dart';
 part 'painters/indicator_painter.dart';
 part 'painters/square_painter.dart';
@@ -39,6 +46,12 @@ TextEditingController heightcontroler = TextEditingController();
 TextEditingController widthcontroler = TextEditingController();
 double width = 920;
 double height = 1080;
+
+double imgWidth = 920;
+double imgHeight = 1080;
+double imgX = 0;
+double imgY = 0;
+double imgRatio = 1;
 
 Offset globalSquareA;
 Offset globalSquareB;
@@ -119,6 +132,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   final GlobalKey globalKey = GlobalKey();
   File _image;
   Image _imageWeb;
+  Uint8List _imageBytes;
   String _imageBase64;
   ScreenshotController screenshotController = ScreenshotController();
   Timer timeprediction;
@@ -293,6 +307,20 @@ class _ImageEditorProState extends State<ImageEditorPro> {
               : SizedBox(),
           actions: <Widget>[
             IconButton(
+              icon: Icon(
+                Icons.settings_overscan_rounded,
+                color: selectedButton == PickerStateConstant.dragAndDrop ? Colors.amber : Colors.white,
+              ),
+              onPressed: isLoadingImage
+                  ? null
+                  : () {
+                      setState(() {
+                        selectedButton = PickerStateConstant.dragAndDrop;
+                        drawState = PickerStateConstant.dragAndDrop;
+                      });
+                    },
+            ),
+            IconButton(
               icon: Icon(Icons.undo_rounded),
               onPressed: isLoadingImage ? null : _revertLastAction,
             ),
@@ -331,108 +359,134 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                 children: [
                   Screenshot(
                     controller: screenshotController,
-                    child: Container(
-                      color: Colors.white,
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      child: RepaintBoundary(
-                        key: globalKey,
-                        child: Stack(
-                          children: <Widget>[
-                            // Text(_imageBase64 ?? 'No _imageBase64'),
-                            // if (_imageBase64 != null) Image.memory(base64.decode(_imageBase64)),
-                            if (_imageWeb != null) _imageWeb,
-                            _image != null
-                                ? Image.file(
-                                    _image,
-                                    height: height.toDouble(),
-                                    width: width.toDouble(),
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: MediaQuery.of(context).size.height,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        debugPrint('Tapped');
+                      },
+                      onPanUpdate: (details) {
+                        debugPrint('onPanUpdate');
+                        setState(() {
+                          imgX += details.delta.dx / 2;
+                          imgY += details.delta.dy / 2;
+                        });
+                      },
+                      child: Container(
+                        color: Colors.white,
+                        width: MediaQuery.of(context).size.height * 0.8,
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        margin: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width / 2 - (MediaQuery.of(context).size.height * 0.8 / 2),
+                          top: MediaQuery.of(context).size.height * 0.1,
+                          bottom: MediaQuery.of(context).size.height * 0.1,
+                        ),
+                        child: RepaintBoundary(
+                          key: globalKey,
+                          child: Stack(
+                            children: <Widget>[
+                              // Text('selectedSize: ' + selectedSize.toString()),
+                              // Text(_imageBase64 ?? 'No _imageBase64'),
+                              // if (_imageBase64 != null) Image.memory(base64.decode(_imageBase64)),
+                              if (_imageBytes != null)
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: MediaQuery.of(context).size.height,
+                                  transform: Matrix4.translationValues(imgX, imgY, 0),
+                                  child: Image.memory(
+                                    _imageBytes,
+                                    fit: BoxFit.scaleDown,
+                                    alignment: FractionalOffset.topCenter,
                                   ),
-                            Stack(
-                              children: [
-                                Positioned(
-                                    left: -300,
-                                    child: Column(
-                                      children: [
-                                        Text(squares.length.toString()),
-                                        Text(circles.length.toString()),
-                                        Text(indicators.length.toString()),
-                                        Text(_controller.points.length.toString()),
-                                        Text(multiwidget.length.toString()),
-                                      ],
-                                    )),
-                                circleStack,
-                                squareStack,
-                                indicatorStack,
-                                Signat(),
-                                drawSelector(),
-                                ...multiwidget.asMap().entries.map((f) {
-                                  return type[f.key] == 2
-                                      ? TextView(
-                                          left: offsets[f.key].dx,
-                                          top: offsets[f.key].dy,
-                                          ontap: () {
-                                            scaf.currentState.showBottomSheet((context) {
-                                              return Sliders(
-                                                size: f.key,
-                                                sizevalue: fontsize[f.key].toDouble(),
-                                              );
-                                            });
-                                          },
-                                          onpanupdate: (details) {
-                                            setState(() {
-                                              offsets[f.key] = Offset(offsets[f.key].dx + details.delta.dx,
-                                                  offsets[f.key].dy + details.delta.dy);
-                                            });
-                                          },
-                                          value: f.value.toString(),
-                                          fontsize: fontsize[f.key].toDouble(),
-                                          align: TextAlign.center,
-                                        )
-                                      : Container();
-                                }).toList(),
-                              ],
-                            ),
-                            Center(
-                              child: Visibility(
-                                visible: isLoadingImage && showLoadingProgress,
-                                child: CircularProgressIndicator(),
+                                ),
+                              _image != null
+                                  ? Center(
+                                      child: Image.file(
+                                        _image,
+                                        width: MediaQuery.of(context).size.height * 0.8,
+                                        height: MediaQuery.of(context).size.height * 0.8,
+                                        fit: BoxFit.cover,
+                                        alignment: Alignment.center,
+                                      ),
+                                    )
+                                  : Container(
+                                      width: MediaQuery.of(context).size.height * 0.8,
+                                      height: MediaQuery.of(context).size.height * 0.8,
+                                    ),
+                              Stack(
+                                children: [
+                                  Positioned(
+                                      left: -300,
+                                      child: Column(
+                                        children: [
+                                          Text(squares.length.toString()),
+                                          Text(circles.length.toString()),
+                                          Text(indicators.length.toString()),
+                                          Text(_controller.points.length.toString()),
+                                          Text(multiwidget.length.toString()),
+                                        ],
+                                      )),
+                                  circleStack,
+                                  squareStack,
+                                  indicatorStack,
+                                  if (selectedButton == PickerStateConstant.brush) Signat(),
+                                  drawSelector(),
+                                  ...multiwidget.asMap().entries.map((f) {
+                                    return type[f.key] == 2
+                                        ? TextView(
+                                            left: offsets[f.key].dx,
+                                            top: offsets[f.key].dy,
+                                            ontap: () {
+                                              scaf.currentState.showBottomSheet((context) {
+                                                return Sliders(
+                                                  size: f.key,
+                                                  sizevalue: fontsize[f.key].toDouble(),
+                                                );
+                                              });
+                                            },
+                                            onpanupdate: (details) {
+                                              setState(() {
+                                                offsets[f.key] = Offset(offsets[f.key].dx + details.delta.dx,
+                                                    offsets[f.key].dy + details.delta.dy);
+                                              });
+                                            },
+                                            value: f.value.toString(),
+                                            fontsize: fontsize[f.key].toDouble(),
+                                            align: TextAlign.center,
+                                          )
+                                        : Container();
+                                  }).toList(),
+                                ],
                               ),
-                            ),
-                          ],
+                              Center(
+                                child: Visibility(
+                                  visible: isLoadingImage && showLoadingProgress,
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   )
                 ],
               ),
-              /*Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 20, right: 50),
-                  child: SizedBox(
-                    width: 300,
-                    height: 50,
-                    child: Slider(
-                      value: selectedSize.toDouble(),
-                      min: 5,
-                      max: 36,
-                      divisions: 36,
-                      label: '$selectedSize',
-                      onChanged: (double newValue) {
-                        setState(() {
-                          selectedSize = newValue.round().toDouble();
-                        });
-                      },
-                    ),
-                  ),
+              Positioned(
+                child: Slider(
+                  activeColor: Colors.red,
+                  inactiveColor: Colors.purple,
+                  value: imgWidth,
+                  min: 1,
+                  max: 1000,
+                  onChanged: (value) {
+                    setState(() {
+                      imgWidth = value;
+                    });
+                  },
                 ),
-              ),*/
+                top: 100,
+                left: 0,
+              ),
               Visibility(
                 visible: !isLoadingImage && selectedButton != PickerStateConstant.brush,
                 child: Align(
@@ -721,12 +775,13 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                     Navigator.pop(context);
 
                                     if (kIsWeb) {
-                                      final fromPicker = await ImagePickerWeb.getImageAsWidget();
+                                      // final fromPicker = await ImagePickerWeb.getImageAsWidget();
+                                      final bytes = await ImagePickerWeb.getImageAsBytes();
 
-                                      if (fromPicker != null) {
+                                      if (bytes != null) {
                                         setState(() {
                                           isLoadingImage = false;
-                                          _imageWeb = fromPicker;
+                                          _imageBytes = bytes;
                                         });
                                       }
                                     } else {
@@ -902,7 +957,11 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   }
 
   Widget drawSelector() {
+    if (drawState == PickerStateConstant.dragAndDrop) return Container();
+
     switch (drawState) {
+      case PickerStateConstant.dragAndDrop:
+        return Container();
       case PickerStateConstant.brush:
         return GestureDetector(
             onPanUpdate: (DragUpdateDetails details) {
@@ -986,6 +1045,15 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         break;
       case PickerStateConstant.indicator:
         return GestureDetector(
+          onLongPress: () => setState(() {
+            drawState = PickerStateConstant.dragAndDrop;
+          }),
+          onLongPressEnd: (details) => setState(() {
+            drawState = PickerStateConstant.dragAndDrop;
+          }),
+          onLongPressMoveUpdate: (details) => setState(() {
+            drawState = PickerStateConstant.dragAndDrop;
+          }),
           onPanDown: (DragDownDetails details) {
             print(details.localPosition);
             setState(() {
