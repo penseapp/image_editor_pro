@@ -261,13 +261,6 @@ packages:
       relative: true
     source: path
     version: "2.0.6+15"
-  image_gallery_saver:
-    dependency: transitive
-    description:
-      name: image_gallery_saver
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.7.1"
   image_picker:
     dependency: transitive
     description:
