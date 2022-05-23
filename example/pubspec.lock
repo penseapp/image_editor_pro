@@ -106,6 +106,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.1"
+  crop_image:
+    dependency: transitive
+    description:
+      name: crop_image
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   crypto:
     dependency: transitive
     description:
@@ -247,20 +254,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.19"
-  image_cropper:
-    dependency: transitive
-    description:
-      name: image_cropper
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.5.1"
   image_editor_pro:
     dependency: "direct dev"
     description:
       path: ".."
       relative: true
     source: path
-    version: "2.0.5+14"
+    version: "2.0.6+15"
   image_gallery_saver:
     dependency: transitive
     description:
