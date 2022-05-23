@@ -8,6 +8,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:arrow_path/arrow_path.dart';
+import 'package:crop_image/crop_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -25,12 +26,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:signature/signature.dart';
-
-import 'package:image_cropper/image_cropper.dart';
-
-import 'cropper/ui_helper.dart'
-    if (dart.library.io) 'cropper/mobile_ui_helper.dart'
-    if (dart.library.html) 'cropper/web_ui_helper.dart';
 
 part 'painters/circle_painter.dart';
 part 'painters/indicator_painter.dart';
@@ -132,6 +127,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   final GlobalKey globalKey = GlobalKey();
   File _image;
   Image _imageWeb;
+  Image _croppedImage;
   Uint8List _imageBytes;
   String _imageBase64;
   ScreenshotController screenshotController = ScreenshotController();
@@ -306,20 +302,20 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                 )
               : SizedBox(),
           actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.settings_overscan_rounded,
-                color: selectedButton == PickerStateConstant.dragAndDrop ? Colors.amber : Colors.white,
-              ),
-              onPressed: isLoadingImage
-                  ? null
-                  : () {
-                      setState(() {
-                        selectedButton = PickerStateConstant.dragAndDrop;
-                        drawState = PickerStateConstant.dragAndDrop;
-                      });
-                    },
-            ),
+            // IconButton(
+            //   icon: Icon(
+            //     Icons.settings_overscan_rounded,
+            //     color: selectedButton == PickerStateConstant.dragAndDrop ? Colors.amber : Colors.white,
+            //   ),
+            //   onPressed: isLoadingImage
+            //       ? null
+            //       : () {
+            //           setState(() {
+            //             selectedButton = PickerStateConstant.dragAndDrop;
+            //             drawState = PickerStateConstant.dragAndDrop;
+            //           });
+            //         },
+            // ),
             IconButton(
               icon: Icon(Icons.undo_rounded),
               onPressed: isLoadingImage ? null : _revertLastAction,
@@ -357,135 +353,122 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             children: [
               Stack(
                 children: [
-                  Screenshot(
-                    controller: screenshotController,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        debugPrint('Tapped');
-                      },
-                      onPanUpdate: (details) {
-                        debugPrint('onPanUpdate');
-                        setState(() {
-                          imgX += details.delta.dx / 2;
-                          imgY += details.delta.dy / 2;
-                        });
-                      },
-                      child: Container(
-                        color: Colors.white,
-                        width: MediaQuery.of(context).size.height * 0.8,
-                        height: MediaQuery.of(context).size.height * 0.8,
-                        margin: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width / 2 - (MediaQuery.of(context).size.height * 0.8 / 2),
-                          top: MediaQuery.of(context).size.height * 0.1,
-                          bottom: MediaQuery.of(context).size.height * 0.1,
-                        ),
-                        child: RepaintBoundary(
-                          key: globalKey,
-                          child: Stack(
-                            children: <Widget>[
-                              // Text('selectedSize: ' + selectedSize.toString()),
-                              // Text(_imageBase64 ?? 'No _imageBase64'),
-                              // if (_imageBase64 != null) Image.memory(base64.decode(_imageBase64)),
-                              if (_imageBytes != null)
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: MediaQuery.of(context).size.height,
-                                  transform: Matrix4.translationValues(imgX, imgY, 0),
-                                  child: Image.memory(
-                                    _imageBytes,
-                                    fit: BoxFit.scaleDown,
-                                    alignment: FractionalOffset.topCenter,
+                  Center(
+                    child: Screenshot(
+                      controller: screenshotController,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          debugPrint('Tapped');
+                        },
+                        onPanUpdate: (details) {
+                          debugPrint('onPanUpdate');
+                          setState(() {
+                            imgX += details.delta.dx / 2;
+                            imgY += details.delta.dy / 2;
+                          });
+                        },
+                        child: Container(
+                          color: Colors.white,
+                          width: 500,
+                          height: 500,
+                          // margin: EdgeInsets.only(
+                          //   left: MediaQuery.of(context).size.width / 2 - (500 / 2),
+                          //   top: MediaQuery.of(context).size.height * 0.1,
+                          //   bottom: MediaQuery.of(context).size.height * 0.1,
+                          // ),
+                          child: RepaintBoundary(
+                            key: globalKey,
+                            child: Stack(
+                              children: <Widget>[
+                                // Text('selectedSize: ' + selectedSize.toString()),
+                                // Text(_imageBase64 ?? 'No _imageBase64'),
+                                // if (_imageBase64 != null) Image.memory(base64.decode(_imageBase64)),
+                                if (_croppedImage != null) _croppedImage,
+                                if (_imageBytes != null && _croppedImage == null)
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.height,
+                                    transform: Matrix4.translationValues(imgX, imgY, 0),
+                                    child: Image.memory(
+                                      _imageBytes,
+                                      fit: BoxFit.scaleDown,
+                                      alignment: FractionalOffset.topCenter,
+                                    ),
+                                  ),
+                                _image != null
+                                    ? Center(
+                                        child: Image.file(
+                                          _image,
+                                          width: 500,
+                                          height: 500,
+                                          fit: BoxFit.cover,
+                                          alignment: Alignment.center,
+                                        ),
+                                      )
+                                    : Container(
+                                        width: 500,
+                                        height: 500,
+                                      ),
+                                Stack(
+                                  children: [
+                                    Positioned(
+                                        left: -300,
+                                        child: Column(
+                                          children: [
+                                            Text(squares.length.toString()),
+                                            Text(circles.length.toString()),
+                                            Text(indicators.length.toString()),
+                                            Text(_controller.points.length.toString()),
+                                            Text(multiwidget.length.toString()),
+                                          ],
+                                        )),
+                                    circleStack,
+                                    squareStack,
+                                    indicatorStack,
+                                    if (selectedButton == PickerStateConstant.brush) Signat(),
+                                    drawSelector(),
+                                    ...multiwidget.asMap().entries.map((f) {
+                                      return type[f.key] == 2
+                                          ? TextView(
+                                              left: offsets[f.key].dx,
+                                              top: offsets[f.key].dy,
+                                              ontap: () {
+                                                scaf.currentState.showBottomSheet((context) {
+                                                  return Sliders(
+                                                    size: f.key,
+                                                    sizevalue: fontsize[f.key].toDouble(),
+                                                  );
+                                                });
+                                              },
+                                              onpanupdate: (details) {
+                                                setState(() {
+                                                  offsets[f.key] = Offset(offsets[f.key].dx + details.delta.dx,
+                                                      offsets[f.key].dy + details.delta.dy);
+                                                });
+                                              },
+                                              value: f.value.toString(),
+                                              fontsize: fontsize[f.key].toDouble(),
+                                              align: TextAlign.center,
+                                            )
+                                          : Container();
+                                    }).toList(),
+                                  ],
+                                ),
+                                Center(
+                                  child: Visibility(
+                                    visible: isLoadingImage && showLoadingProgress,
+                                    child: CircularProgressIndicator(),
                                   ),
                                 ),
-                              _image != null
-                                  ? Center(
-                                      child: Image.file(
-                                        _image,
-                                        width: MediaQuery.of(context).size.height * 0.8,
-                                        height: MediaQuery.of(context).size.height * 0.8,
-                                        fit: BoxFit.cover,
-                                        alignment: Alignment.center,
-                                      ),
-                                    )
-                                  : Container(
-                                      width: MediaQuery.of(context).size.height * 0.8,
-                                      height: MediaQuery.of(context).size.height * 0.8,
-                                    ),
-                              Stack(
-                                children: [
-                                  Positioned(
-                                      left: -300,
-                                      child: Column(
-                                        children: [
-                                          Text(squares.length.toString()),
-                                          Text(circles.length.toString()),
-                                          Text(indicators.length.toString()),
-                                          Text(_controller.points.length.toString()),
-                                          Text(multiwidget.length.toString()),
-                                        ],
-                                      )),
-                                  circleStack,
-                                  squareStack,
-                                  indicatorStack,
-                                  if (selectedButton == PickerStateConstant.brush) Signat(),
-                                  drawSelector(),
-                                  ...multiwidget.asMap().entries.map((f) {
-                                    return type[f.key] == 2
-                                        ? TextView(
-                                            left: offsets[f.key].dx,
-                                            top: offsets[f.key].dy,
-                                            ontap: () {
-                                              scaf.currentState.showBottomSheet((context) {
-                                                return Sliders(
-                                                  size: f.key,
-                                                  sizevalue: fontsize[f.key].toDouble(),
-                                                );
-                                              });
-                                            },
-                                            onpanupdate: (details) {
-                                              setState(() {
-                                                offsets[f.key] = Offset(offsets[f.key].dx + details.delta.dx,
-                                                    offsets[f.key].dy + details.delta.dy);
-                                              });
-                                            },
-                                            value: f.value.toString(),
-                                            fontsize: fontsize[f.key].toDouble(),
-                                            align: TextAlign.center,
-                                          )
-                                        : Container();
-                                  }).toList(),
-                                ],
-                              ),
-                              Center(
-                                child: Visibility(
-                                  visible: isLoadingImage && showLoadingProgress,
-                                  child: CircularProgressIndicator(),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   )
                 ],
-              ),
-              Positioned(
-                child: Slider(
-                  activeColor: Colors.red,
-                  inactiveColor: Colors.purple,
-                  value: imgWidth,
-                  min: 1,
-                  max: 1000,
-                  onChanged: (value) {
-                    setState(() {
-                      imgWidth = value;
-                    });
-                  },
-                ),
-                top: 100,
-                left: 0,
               ),
               Visibility(
                 visible: !isLoadingImage && selectedButton != PickerStateConstant.brush,
@@ -737,6 +720,39 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
   final picker = ImagePicker();
 
+  final cropController = CropController(
+    aspectRatio: 1,
+    defaultCrop: const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
+  );
+
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Cortar imagem'),
+          content: CropImage(
+            controller: cropController,
+            image: Image.memory(_imageBytes),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text('Cortar'),
+              onPressed: () async {
+                final croppedImage = await cropController.croppedImage();
+                setState(() {
+                  _croppedImage = croppedImage;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void bottomsheets() {
     openbottomsheet = true;
     setState(() {});
@@ -784,6 +800,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                           _imageBytes = bytes;
                                         });
                                       }
+                                      await _showMyDialog();
                                     } else {
                                       try {
                                         var image = await picker.getImage(source: ImageSource.gallery);
