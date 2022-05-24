@@ -387,8 +387,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                 if (_croppedImage != null) _croppedImage,
                                 if (_imageBytes != null && _croppedImage == null)
                                   Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: MediaQuery.of(context).size.height,
+                                    width: 500,
+                                    height: 500,
                                     transform: Matrix4.translationValues(imgX, imgY, 0),
                                     child: Image.memory(
                                       _imageBytes,
@@ -396,20 +396,22 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                       alignment: FractionalOffset.topCenter,
                                     ),
                                   ),
-                                _image != null
-                                    ? Center(
-                                        child: Image.file(
-                                          _image,
-                                          width: 500,
-                                          height: 500,
-                                          fit: BoxFit.cover,
-                                          alignment: Alignment.center,
-                                        ),
-                                      )
-                                    : Container(
-                                        width: 500,
-                                        height: 500,
-                                      ),
+                                // if (_image != null && _croppedImage == null)
+                                //   Container(
+                                //     width: MediaQuery.of(context).size.width,
+                                //     height: MediaQuery.of(context).size.height,
+                                //     transform: Matrix4.translationValues(imgX, imgY, 0),
+                                //     child: Image.file(
+                                //       _image,
+                                //       fit: BoxFit.scaleDown,
+                                //       alignment: FractionalOffset.topCenter,
+                                //     ),
+                                //   )
+                                // else
+                                //   Container(
+                                //     width: 500,
+                                //     height: 500,
+                                //   ),
                                 Stack(
                                   children: [
                                     Positioned(
@@ -720,12 +722,12 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
   final picker = ImagePicker();
 
-  final cropController = CropController(
-    aspectRatio: 1,
-    defaultCrop: const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
-  );
-
   Future<void> _showMyDialog() async {
+    final cropController = CropController(
+      aspectRatio: 1,
+      defaultCrop: const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
+    );
+
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -733,6 +735,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         return AlertDialog(
           title: const Text('Cortar imagem'),
           content: CropImage(
+            minimumImageSize: 500,
             controller: cropController,
             image: Image.memory(_imageBytes),
           ),
@@ -810,9 +813,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                           var decodedImage = await decodeImageFromList(_bytesImg);
 
                                           setState(() {
-                                            height = decodedImage.height.toDouble();
-                                            width = decodedImage.width.toDouble();
-                                            _image = File(image.path);
+                                            // height = decodedImage.height.toDouble();
+                                            // width = decodedImage.width.toDouble();
+                                            // _image = File(image.path);
                                             _imageBytes = _bytesImg;
                                           });
 
@@ -855,19 +858,23 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                           isLoadingImage = false;
                                           setState(() {});
                                         } else {
+                                          final _imgBytes = File(image.path).readAsBytesSync();
                                           var decodedImage =
                                               await decodeImageFromList(File(image.path).readAsBytesSync());
 
                                           setState(() {
                                             height = decodedImage.height.toDouble();
                                             width = decodedImage.width.toDouble();
-                                            _image = File(image.path);
+                                            // _image = File(image.path);
+                                            _imageBytes = _imgBytes;
                                           });
                                           setState(() => _controller.clear());
                                           await Future.delayed(Duration(seconds: 1), () {
                                             isLoadingImage = false;
                                             setState(() {});
                                           });
+
+                                          await _showMyDialog();
                                         }
                                       }),
                             SizedBox(width: 10),
