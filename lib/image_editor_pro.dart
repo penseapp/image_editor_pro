@@ -813,6 +813,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                           final _bytesImg = File(image.path).readAsBytesSync();
                                           // var decodedImage = await decodeImageFromList(_bytesImg);
 
+                                          if (_bytesImg == null) return;
+
                                           setState(() {
                                             // height = decodedImage.height.toDouble();
                                             // width = decodedImage.width.toDouble();
