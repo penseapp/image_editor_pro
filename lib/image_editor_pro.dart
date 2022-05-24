@@ -21,6 +21,7 @@ import 'package:image_editor_pro/modules/textview.dart';
 import 'package:image_editor_pro/theme/colors.dart';
 import 'package:image_editor_pro/utils/offset_class.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 // import 'package:image_picker_web/image_picker_web.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -795,22 +796,22 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
                                     if (kIsWeb) {
                                       // final fromPicker = await ImagePickerWeb.getImageAsWidget();
-                                      // final bytes = await ImagePickerWeb.getImageAsBytes();
+                                      final bytes = await ImagePickerWeb.getImageAsBytes();
 
-                                      // if (bytes != null) {
-                                      //   setState(() {
-                                      //     isLoadingImage = false;
-                                      //     _imageBytes = bytes;
-                                      //   });
-                                      // }
-                                      // await _showMyDialog();
+                                      if (bytes != null) {
+                                        setState(() {
+                                          isLoadingImage = false;
+                                          _imageBytes = bytes;
+                                        });
+                                      }
+                                      await _showMyDialog();
                                     } else {
                                       try {
                                         var image = await picker.getImage(source: ImageSource.gallery);
 
                                         if (image?.path != null) {
                                           final _bytesImg = File(image.path).readAsBytesSync();
-                                          var decodedImage = await decodeImageFromList(_bytesImg);
+                                          // var decodedImage = await decodeImageFromList(_bytesImg);
 
                                           setState(() {
                                             // height = decodedImage.height.toDouble();
@@ -908,20 +909,20 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
     if (kIsWeb) {
       try {
-        // screenshotController.captureAsUiImage().then((image) async {
-        //   // convert Image to base64
-        //   final imagebytes = await image.toByteData(format: ImageByteFormat.png);
-        //   final base64 = base64Encode(imagebytes.buffer.asUint8List());
+        screenshotController.captureAsUiImage().then((image) async {
+          // convert Image to base64
+          final imagebytes = await image.toByteData(format: ImageByteFormat.png);
+          final base64 = base64Encode(imagebytes.buffer.asUint8List());
 
-        //   setState(() {
-        //     _imageBase64 = base64;
-        //     isLoadingImage = false;
-        //     showLoadingProgress = true;
-        //   });
+          setState(() {
+            _imageBase64 = base64;
+            isLoadingImage = false;
+            showLoadingProgress = true;
+          });
 
-        //   Navigator.pop(context, base64);
-        //   return;
-        // });
+          Navigator.pop(context, base64);
+          return;
+        });
       } catch (e) {
         setState(() {
           isLoadingImage = false;
