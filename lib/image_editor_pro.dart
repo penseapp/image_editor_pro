@@ -742,7 +742,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
     if (kIsWeb) {
       print('web');
-      cropController.crop = const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9);
+      // cropController.crop = const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9);
       print('crop');
     }
 
