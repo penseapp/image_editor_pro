@@ -385,7 +385,14 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                 // Text('selectedSize: ' + selectedSize.toString()),
                                 // Text(_imageBase64 ?? 'No _imageBase64'),
                                 // if (_imageBase64 != null) Image.memory(base64.decode(_imageBase64)),
-                                if (_croppedImage != null) _croppedImage,
+                                if (_croppedImage != null)
+                                  Image(
+                                    image: _croppedImage.image,
+                                    fit: BoxFit.fill,
+                                    width: 500,
+                                    height: 500,
+                                    alignment: Alignment.center,
+                                  ),
                                 if (_imageBytes != null && _croppedImage == null)
                                   Container(
                                     width: 500,
@@ -393,8 +400,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                     transform: Matrix4.translationValues(imgX, imgY, 0),
                                     child: Image.memory(
                                       _imageBytes,
-                                      fit: BoxFit.scaleDown,
-                                      alignment: FractionalOffset.topCenter,
+                                      width: 500,
+                                      height: 500,
+                                      fit: BoxFit.fill,
+                                      alignment: Alignment.center,
                                     ),
                                   ),
                                 // if (_image != null && _croppedImage == null)
@@ -723,11 +732,15 @@ class _ImageEditorProState extends State<ImageEditorPro> {
 
   final picker = ImagePicker();
 
-  Future<void> _showMyDialog() async {
+  Future<void> _showCropDialog() async {
     final cropController = CropController(
       aspectRatio: 1,
-      defaultCrop: const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
+      defaultCrop: kIsWeb ? const Rect.fromLTWH(0, 0, 1, 1) : const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
     );
+
+    if (kIsWeb) {
+      cropController.crop = const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9);
+    }
 
     return showDialog<void>(
       context: context,
@@ -736,7 +749,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         return AlertDialog(
           title: const Text('Cortar imagem'),
           content: CropImage(
-            minimumImageSize: 500,
             controller: cropController,
             image: Image.memory(_imageBytes),
           ),
@@ -803,8 +815,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                           isLoadingImage = false;
                                           _imageBytes = bytes;
                                         });
+                                        await _showCropDialog();
                                       }
-                                      await _showMyDialog();
                                     } else {
                                       try {
                                         var image = await picker.getImage(source: ImageSource.gallery);
@@ -822,7 +834,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                             _imageBytes = _bytesImg;
                                           });
 
-                                          await _showMyDialog();
+                                          await _showCropDialog();
                                         }
                                       } catch (e) {
                                         print('error: $e');
@@ -877,7 +889,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                             setState(() {});
                                           });
 
-                                          await _showMyDialog();
+                                          await _showCropDialog();
                                         }
                                       }),
                             SizedBox(width: 10),
