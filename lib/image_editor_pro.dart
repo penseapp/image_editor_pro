@@ -733,15 +733,20 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   final picker = ImagePicker();
 
   Future<void> _showCropDialog() async {
+    print('showCropDialog');
     final cropController = CropController(
       aspectRatio: 1,
       defaultCrop: kIsWeb ? const Rect.fromLTWH(0, 0, 1, 1) : const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
     );
+    print('crop controller');
 
     if (kIsWeb) {
+      print('web');
       cropController.crop = const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9);
+      print('crop');
     }
 
+    print('show dialog');
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -803,20 +808,28 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                               IconButton(
                                   icon: Icon(Icons.photo_library),
                                   onPressed: () async {
+                                    print('photo library');
                                     isLoadingImage = true;
                                     Navigator.pop(context);
 
                                     if (kIsWeb) {
                                       // final fromPicker = await ImagePickerWeb.getImageAsWidget();
                                       final bytes = await ImagePickerWeb.getImageAsBytes();
+                                      // check if bytes is null
+                                      if (bytes == null) {
+                                        print('bytes is null');
+                                      }
 
                                       if (bytes != null) {
+                                        print('bytes');
                                         setState(() {
                                           isLoadingImage = false;
                                           _imageBytes = bytes;
                                         });
-                                        await _showCropDialog();
                                       }
+
+                                      print('before show crop dialog');
+                                      await _showCropDialog();
                                     } else {
                                       try {
                                         var image = await picker.getImage(source: ImageSource.gallery);
