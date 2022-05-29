@@ -21,7 +21,7 @@ import 'package:image_editor_pro/modules/textview.dart';
 import 'package:image_editor_pro/theme/colors.dart';
 import 'package:image_editor_pro/utils/offset_class.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_web/image_picker_web.dart';
+// import 'package:image_picker_web/image_picker_web.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
@@ -134,7 +134,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   Timer timeprediction;
   bool hasAllPermissions = false;
 
-  final double SCREENSHOT_CONTROLLER_SIZE = 200.0;
+  double SCREENSHOT_CONTROLLER_SIZE = 500.0;
 
   void timers() {
     Timer.periodic(Duration(milliseconds: 10), (tim) {
@@ -368,128 +368,130 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                     Center(
                       heightFactor: _screenshotMinSize,
                       widthFactor: _screenshotMinSize,
-                      child: SizedBox(
-                        width: _screenshotMinSize,
-                        height: _screenshotMinSize,
-                        child: Screenshot(
-                          controller: screenshotController,
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onTap: () {
-                              debugPrint('Tapped');
-                            },
-                            onPanUpdate: (details) {
-                              debugPrint('onPanUpdate');
-                              setState(() {
-                                imgX += details.delta.dx / 2;
-                                imgY += details.delta.dy / 2;
-                              });
-                            },
-                            child: Container(
-                              color: Colors.white,
-                              width: _screenshotMinSize,
-                              height: _screenshotMinSize,
-                              // margin: EdgeInsets.only(
-                              //   left: MediaQuery.of(context).size.width / 2 - (_screenshotMinSize / 2),
-                              //   top: MediaQuery.of(context).size.height * 0.1,
-                              //   bottom: MediaQuery.of(context).size.height * 0.1,
-                              // ),
-                              child: RepaintBoundary(
-                                key: globalKey,
-                                child: Stack(
-                                  children: <Widget>[
-                                    // Text('selectedSize: ' + selectedSize.toString()),
-                                    // Text(_imageBase64 ?? 'No _imageBase64'),
-                                    // if (_imageBase64 != null) Image.memory(base64.decode(_imageBase64)),
-                                    if (_croppedImage != null)
-                                      Image(
-                                        image: _croppedImage.image,
-                                        fit: kIsWeb ? BoxFit.fitHeight : BoxFit.fitWidth,
-                                        width: _screenshotMinSize,
-                                        height: _screenshotMinSize,
-                                        alignment: Alignment.center,
-                                      ),
-                                    if (_imageBytes != null && _croppedImage == null)
-                                      Container(
-                                        width: _screenshotMinSize,
-                                        height: _screenshotMinSize,
-                                        transform: Matrix4.translationValues(imgX, imgY, 0),
-                                        child: Image.memory(
-                                          _imageBytes,
+                      child: Center(
+                        child: Container(
+                          width: _screenshotMinSize,
+                          height: _screenshotMinSize,
+                          child: Screenshot(
+                            controller: screenshotController,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: () {
+                                debugPrint('Tapped');
+                              },
+                              onPanUpdate: (details) {
+                                debugPrint('onPanUpdate');
+                                setState(() {
+                                  imgX += details.delta.dx / 2;
+                                  imgY += details.delta.dy / 2;
+                                });
+                              },
+                              child: Container(
+                                color: Colors.white,
+                                width: _screenshotMinSize,
+                                height: _screenshotMinSize,
+                                // margin: EdgeInsets.only(
+                                //   left: MediaQuery.of(context).size.width / 2 - (_screenshotMinSize / 2),
+                                //   top: MediaQuery.of(context).size.height * 0.1,
+                                //   bottom: MediaQuery.of(context).size.height * 0.1,
+                                // ),
+                                child: RepaintBoundary(
+                                  key: globalKey,
+                                  child: Stack(
+                                    children: <Widget>[
+                                      // Text('selectedSize: ' + selectedSize.toString()),
+                                      // Text(_imageBase64 ?? 'No _imageBase64'),
+                                      // if (_imageBase64 != null) Image.memory(base64.decode(_imageBase64)),
+                                      if (_croppedImage != null)
+                                        Image(
+                                          image: _croppedImage.image,
+                                          fit: kIsWeb ? BoxFit.fitHeight : BoxFit.fitWidth,
                                           width: _screenshotMinSize,
                                           height: _screenshotMinSize,
-                                          fit: BoxFit.fill,
                                           alignment: Alignment.center,
                                         ),
+                                      if (_imageBytes != null && _croppedImage == null)
+                                        Container(
+                                          width: _screenshotMinSize,
+                                          height: _screenshotMinSize,
+                                          transform: Matrix4.translationValues(imgX, imgY, 0),
+                                          child: Image.memory(
+                                            _imageBytes,
+                                            width: _screenshotMinSize,
+                                            height: _screenshotMinSize,
+                                            fit: BoxFit.fill,
+                                            alignment: Alignment.center,
+                                          ),
+                                        ),
+                                      // if (_image != null && _croppedImage == null)
+                                      //   Container(
+                                      //     width: MediaQuery.of(context).size.width,
+                                      //     height: MediaQuery.of(context).size.height,
+                                      //     transform: Matrix4.translationValues(imgX, imgY, 0),
+                                      //     child: Image.file(
+                                      //       _image,
+                                      //       fit: BoxFit.scaleDown,
+                                      //       alignment: FractionalOffset.topCenter,
+                                      //     ),
+                                      //   )
+                                      // else
+                                      //   Container(
+                                      //     width: _screenshotMinSize,
+                                      //     height: _screenshotMinSize,
+                                      //   ),
+                                      Stack(
+                                        children: [
+                                          Positioned(
+                                              left: -300,
+                                              child: Column(
+                                                children: [
+                                                  Text(squares.length.toString()),
+                                                  Text(circles.length.toString()),
+                                                  Text(indicators.length.toString()),
+                                                  Text(_controller.points.length.toString()),
+                                                  Text(multiwidget.length.toString()),
+                                                ],
+                                              )),
+                                          circleStack,
+                                          squareStack,
+                                          indicatorStack,
+                                          if (selectedButton == PickerStateConstant.brush) Signat(),
+                                          drawSelector(),
+                                          ...multiwidget.asMap().entries.map((f) {
+                                            return type[f.key] == 2
+                                                ? TextView(
+                                                    left: offsets[f.key].dx,
+                                                    top: offsets[f.key].dy,
+                                                    ontap: () {
+                                                      scaf.currentState.showBottomSheet((context) {
+                                                        return Sliders(
+                                                          size: f.key,
+                                                          sizevalue: fontsize[f.key].toDouble(),
+                                                        );
+                                                      });
+                                                    },
+                                                    onpanupdate: (details) {
+                                                      setState(() {
+                                                        offsets[f.key] = Offset(offsets[f.key].dx + details.delta.dx,
+                                                            offsets[f.key].dy + details.delta.dy);
+                                                      });
+                                                    },
+                                                    value: f.value.toString(),
+                                                    fontsize: fontsize[f.key].toDouble(),
+                                                    align: TextAlign.center,
+                                                  )
+                                                : Container();
+                                          }).toList(),
+                                        ],
                                       ),
-                                    // if (_image != null && _croppedImage == null)
-                                    //   Container(
-                                    //     width: MediaQuery.of(context).size.width,
-                                    //     height: MediaQuery.of(context).size.height,
-                                    //     transform: Matrix4.translationValues(imgX, imgY, 0),
-                                    //     child: Image.file(
-                                    //       _image,
-                                    //       fit: BoxFit.scaleDown,
-                                    //       alignment: FractionalOffset.topCenter,
-                                    //     ),
-                                    //   )
-                                    // else
-                                    //   Container(
-                                    //     width: _screenshotMinSize,
-                                    //     height: _screenshotMinSize,
-                                    //   ),
-                                    Stack(
-                                      children: [
-                                        Positioned(
-                                            left: -300,
-                                            child: Column(
-                                              children: [
-                                                Text(squares.length.toString()),
-                                                Text(circles.length.toString()),
-                                                Text(indicators.length.toString()),
-                                                Text(_controller.points.length.toString()),
-                                                Text(multiwidget.length.toString()),
-                                              ],
-                                            )),
-                                        circleStack,
-                                        squareStack,
-                                        indicatorStack,
-                                        if (selectedButton == PickerStateConstant.brush) Signat(),
-                                        drawSelector(),
-                                        ...multiwidget.asMap().entries.map((f) {
-                                          return type[f.key] == 2
-                                              ? TextView(
-                                                  left: offsets[f.key].dx,
-                                                  top: offsets[f.key].dy,
-                                                  ontap: () {
-                                                    scaf.currentState.showBottomSheet((context) {
-                                                      return Sliders(
-                                                        size: f.key,
-                                                        sizevalue: fontsize[f.key].toDouble(),
-                                                      );
-                                                    });
-                                                  },
-                                                  onpanupdate: (details) {
-                                                    setState(() {
-                                                      offsets[f.key] = Offset(offsets[f.key].dx + details.delta.dx,
-                                                          offsets[f.key].dy + details.delta.dy);
-                                                    });
-                                                  },
-                                                  value: f.value.toString(),
-                                                  fontsize: fontsize[f.key].toDouble(),
-                                                  align: TextAlign.center,
-                                                )
-                                              : Container();
-                                        }).toList(),
-                                      ],
-                                    ),
-                                    Center(
-                                      child: Visibility(
-                                        visible: isLoadingImage && showLoadingProgress,
-                                        child: CircularProgressIndicator(),
+                                      Center(
+                                        child: Visibility(
+                                          visible: isLoadingImage && showLoadingProgress,
+                                          child: CircularProgressIndicator(),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -831,22 +833,22 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                     Navigator.pop(context);
 
                                     if (kIsWeb) {
-                                      final bytes = await ImagePickerWeb.getImageAsBytes();
+                                      // final bytes = await ImagePickerWeb.getImageAsBytes();
 
-                                      if (bytes == null) {
-                                        print('bytes is null');
-                                      }
+                                      // if (bytes == null) {
+                                      //   print('bytes is null');
+                                      // }
 
-                                      if (bytes != null) {
-                                        print('bytes');
-                                        setState(() {
-                                          isLoadingImage = false;
-                                          _imageBytes = bytes;
-                                        });
-                                      }
+                                      // if (bytes != null) {
+                                      //   print('bytes');
+                                      //   setState(() {
+                                      //     isLoadingImage = false;
+                                      //     _imageBytes = bytes;
+                                      //   });
+                                      // }
 
-                                      print('before show crop dialog');
-                                      await _showCropDialog();
+                                      // print('before show crop dialog');
+                                      // await _showCropDialog();
                                     } else {
                                       try {
                                         var image = await picker.getImage(source: ImageSource.gallery);
@@ -978,14 +980,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     }
 
     screenshotController.capture(delay: Duration(milliseconds: 500), pixelRatio: 1).then((File image) async {
-      final bodyHeight = MediaQuery.of(context).size.height -
-          Scaffold.of(context).appBarMaxHeight -
-          Scaffold.of(context).appBarMaxHeight;
-
-      final bodyWidth = MediaQuery.of(context).size.width;
-
-      final _screenshotMinSize = min(bodyHeight, bodyWidth);
-
       final paths = await getExternalStorageDirectory();
       final _path = paths.path + '/' + DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
 
@@ -994,8 +988,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         final scale = calcScale(
           srcWidth: decodedImage.width.toDouble(),
           srcHeight: decodedImage.height.toDouble(),
-          minWidth: _screenshotMinSize,
-          minHeight: _screenshotMinSize,
+          minWidth: 500,
+          minHeight: 500,
         );
 
         final result = await FlutterImageCompress.compressAndGetFile(
