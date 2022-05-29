@@ -21,7 +21,7 @@ import 'package:image_editor_pro/modules/textview.dart';
 import 'package:image_editor_pro/theme/colors.dart';
 import 'package:image_editor_pro/utils/offset_class.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_web/image_picker_web.dart';
+// import 'package:image_picker_web/image_picker_web.dart';
 // import 'package:image_picker_web/image_picker_web.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -813,23 +813,22 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                     Navigator.pop(context);
 
                                     if (kIsWeb) {
-                                      // final fromPicker = await ImagePickerWeb.getImageAsWidget();
-                                      final bytes = await ImagePickerWeb.getImageAsBytes();
-                                      // check if bytes is null
-                                      if (bytes == null) {
-                                        print('bytes is null');
-                                      }
+                                      // final bytes = await ImagePickerWeb.getImageAsBytes();
 
-                                      if (bytes != null) {
-                                        print('bytes');
-                                        setState(() {
-                                          isLoadingImage = false;
-                                          _imageBytes = bytes;
-                                        });
-                                      }
+                                      // if (bytes == null) {
+                                      //   print('bytes is null');
+                                      // }
 
-                                      print('before show crop dialog');
-                                      await _showCropDialog();
+                                      // if (bytes != null) {
+                                      //   print('bytes');
+                                      //   setState(() {
+                                      //     isLoadingImage = false;
+                                      //     _imageBytes = bytes;
+                                      //   });
+                                      // }
+
+                                      // print('before show crop dialog');
+                                      // await _showCropDialog();
                                     } else {
                                       try {
                                         var image = await picker.getImage(source: ImageSource.gallery);
