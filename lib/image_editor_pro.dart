@@ -388,7 +388,7 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                 if (_croppedImage != null)
                                   Image(
                                     image: _croppedImage.image,
-                                    fit: BoxFit.fill,
+                                    fit: kIsWeb ? BoxFit.fitHeight : BoxFit.fitWidth,
                                     width: 500,
                                     height: 500,
                                     alignment: Alignment.center,
