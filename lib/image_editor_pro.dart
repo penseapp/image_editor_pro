@@ -134,6 +134,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   Timer timeprediction;
   bool hasAllPermissions = false;
 
+  final double SCREENSHOT_CONTROLLER_SIZE = 200.0;
+
   void timers() {
     Timer.periodic(Duration(milliseconds: 10), (tim) {
       setState(() {});
@@ -347,254 +349,271 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           ],
           backgroundColor: CustomColors.primary,
         ),
-        body: IgnorePointer(
-          ignoring: isLoadingImage,
-          child: Stack(
-            children: [
-              Stack(
-                children: [
-                  Center(
-                    child: Screenshot(
-                      controller: screenshotController,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          debugPrint('Tapped');
-                        },
-                        onPanUpdate: (details) {
-                          debugPrint('onPanUpdate');
-                          setState(() {
-                            imgX += details.delta.dx / 2;
-                            imgY += details.delta.dy / 2;
-                          });
-                        },
-                        child: Container(
-                          color: Colors.white,
-                          width: 500,
-                          height: 500,
-                          // margin: EdgeInsets.only(
-                          //   left: MediaQuery.of(context).size.width / 2 - (500 / 2),
-                          //   top: MediaQuery.of(context).size.height * 0.1,
-                          //   bottom: MediaQuery.of(context).size.height * 0.1,
-                          // ),
-                          child: RepaintBoundary(
-                            key: globalKey,
-                            child: Stack(
-                              children: <Widget>[
-                                // Text('selectedSize: ' + selectedSize.toString()),
-                                // Text(_imageBase64 ?? 'No _imageBase64'),
-                                // if (_imageBase64 != null) Image.memory(base64.decode(_imageBase64)),
-                                if (_croppedImage != null)
-                                  Image(
-                                    image: _croppedImage.image,
-                                    fit: kIsWeb ? BoxFit.fitHeight : BoxFit.fitWidth,
-                                    width: 500,
-                                    height: 500,
-                                    alignment: Alignment.center,
-                                  ),
-                                if (_imageBytes != null && _croppedImage == null)
-                                  Container(
-                                    width: 500,
-                                    height: 500,
-                                    transform: Matrix4.translationValues(imgX, imgY, 0),
-                                    child: Image.memory(
-                                      _imageBytes,
-                                      width: 500,
-                                      height: 500,
-                                      fit: BoxFit.fill,
-                                      alignment: Alignment.center,
+        body: Builder(builder: (context) {
+          final bodyHeight = MediaQuery.of(context).size.height -
+              Scaffold.of(context).appBarMaxHeight -
+              Scaffold.of(context).appBarMaxHeight;
+
+          final bodyWidth = MediaQuery.of(context).size.width;
+          final padding = min(bodyHeight, bodyWidth) * 0.1;
+
+          final _screenshotMinSize = min(bodyHeight, bodyWidth) - padding;
+
+          return IgnorePointer(
+            ignoring: isLoadingImage,
+            child: Stack(
+              children: [
+                Stack(
+                  children: [
+                    Center(
+                      heightFactor: _screenshotMinSize,
+                      widthFactor: _screenshotMinSize,
+                      child: SizedBox(
+                        width: _screenshotMinSize,
+                        height: _screenshotMinSize,
+                        child: Screenshot(
+                          controller: screenshotController,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () {
+                              debugPrint('Tapped');
+                            },
+                            onPanUpdate: (details) {
+                              debugPrint('onPanUpdate');
+                              setState(() {
+                                imgX += details.delta.dx / 2;
+                                imgY += details.delta.dy / 2;
+                              });
+                            },
+                            child: Container(
+                              color: Colors.white,
+                              width: _screenshotMinSize,
+                              height: _screenshotMinSize,
+                              // margin: EdgeInsets.only(
+                              //   left: MediaQuery.of(context).size.width / 2 - (_screenshotMinSize / 2),
+                              //   top: MediaQuery.of(context).size.height * 0.1,
+                              //   bottom: MediaQuery.of(context).size.height * 0.1,
+                              // ),
+                              child: RepaintBoundary(
+                                key: globalKey,
+                                child: Stack(
+                                  children: <Widget>[
+                                    // Text('selectedSize: ' + selectedSize.toString()),
+                                    // Text(_imageBase64 ?? 'No _imageBase64'),
+                                    // if (_imageBase64 != null) Image.memory(base64.decode(_imageBase64)),
+                                    if (_croppedImage != null)
+                                      Image(
+                                        image: _croppedImage.image,
+                                        fit: kIsWeb ? BoxFit.fitHeight : BoxFit.fitWidth,
+                                        width: _screenshotMinSize,
+                                        height: _screenshotMinSize,
+                                        alignment: Alignment.center,
+                                      ),
+                                    if (_imageBytes != null && _croppedImage == null)
+                                      Container(
+                                        width: _screenshotMinSize,
+                                        height: _screenshotMinSize,
+                                        transform: Matrix4.translationValues(imgX, imgY, 0),
+                                        child: Image.memory(
+                                          _imageBytes,
+                                          width: _screenshotMinSize,
+                                          height: _screenshotMinSize,
+                                          fit: BoxFit.fill,
+                                          alignment: Alignment.center,
+                                        ),
+                                      ),
+                                    // if (_image != null && _croppedImage == null)
+                                    //   Container(
+                                    //     width: MediaQuery.of(context).size.width,
+                                    //     height: MediaQuery.of(context).size.height,
+                                    //     transform: Matrix4.translationValues(imgX, imgY, 0),
+                                    //     child: Image.file(
+                                    //       _image,
+                                    //       fit: BoxFit.scaleDown,
+                                    //       alignment: FractionalOffset.topCenter,
+                                    //     ),
+                                    //   )
+                                    // else
+                                    //   Container(
+                                    //     width: _screenshotMinSize,
+                                    //     height: _screenshotMinSize,
+                                    //   ),
+                                    Stack(
+                                      children: [
+                                        Positioned(
+                                            left: -300,
+                                            child: Column(
+                                              children: [
+                                                Text(squares.length.toString()),
+                                                Text(circles.length.toString()),
+                                                Text(indicators.length.toString()),
+                                                Text(_controller.points.length.toString()),
+                                                Text(multiwidget.length.toString()),
+                                              ],
+                                            )),
+                                        circleStack,
+                                        squareStack,
+                                        indicatorStack,
+                                        if (selectedButton == PickerStateConstant.brush) Signat(),
+                                        drawSelector(),
+                                        ...multiwidget.asMap().entries.map((f) {
+                                          return type[f.key] == 2
+                                              ? TextView(
+                                                  left: offsets[f.key].dx,
+                                                  top: offsets[f.key].dy,
+                                                  ontap: () {
+                                                    scaf.currentState.showBottomSheet((context) {
+                                                      return Sliders(
+                                                        size: f.key,
+                                                        sizevalue: fontsize[f.key].toDouble(),
+                                                      );
+                                                    });
+                                                  },
+                                                  onpanupdate: (details) {
+                                                    setState(() {
+                                                      offsets[f.key] = Offset(offsets[f.key].dx + details.delta.dx,
+                                                          offsets[f.key].dy + details.delta.dy);
+                                                    });
+                                                  },
+                                                  value: f.value.toString(),
+                                                  fontsize: fontsize[f.key].toDouble(),
+                                                  align: TextAlign.center,
+                                                )
+                                              : Container();
+                                        }).toList(),
+                                      ],
                                     ),
-                                  ),
-                                // if (_image != null && _croppedImage == null)
-                                //   Container(
-                                //     width: MediaQuery.of(context).size.width,
-                                //     height: MediaQuery.of(context).size.height,
-                                //     transform: Matrix4.translationValues(imgX, imgY, 0),
-                                //     child: Image.file(
-                                //       _image,
-                                //       fit: BoxFit.scaleDown,
-                                //       alignment: FractionalOffset.topCenter,
-                                //     ),
-                                //   )
-                                // else
-                                //   Container(
-                                //     width: 500,
-                                //     height: 500,
-                                //   ),
-                                Stack(
-                                  children: [
-                                    Positioned(
-                                        left: -300,
-                                        child: Column(
-                                          children: [
-                                            Text(squares.length.toString()),
-                                            Text(circles.length.toString()),
-                                            Text(indicators.length.toString()),
-                                            Text(_controller.points.length.toString()),
-                                            Text(multiwidget.length.toString()),
-                                          ],
-                                        )),
-                                    circleStack,
-                                    squareStack,
-                                    indicatorStack,
-                                    if (selectedButton == PickerStateConstant.brush) Signat(),
-                                    drawSelector(),
-                                    ...multiwidget.asMap().entries.map((f) {
-                                      return type[f.key] == 2
-                                          ? TextView(
-                                              left: offsets[f.key].dx,
-                                              top: offsets[f.key].dy,
-                                              ontap: () {
-                                                scaf.currentState.showBottomSheet((context) {
-                                                  return Sliders(
-                                                    size: f.key,
-                                                    sizevalue: fontsize[f.key].toDouble(),
-                                                  );
-                                                });
-                                              },
-                                              onpanupdate: (details) {
-                                                setState(() {
-                                                  offsets[f.key] = Offset(offsets[f.key].dx + details.delta.dx,
-                                                      offsets[f.key].dy + details.delta.dy);
-                                                });
-                                              },
-                                              value: f.value.toString(),
-                                              fontsize: fontsize[f.key].toDouble(),
-                                              align: TextAlign.center,
-                                            )
-                                          : Container();
-                                    }).toList(),
+                                    Center(
+                                      child: Visibility(
+                                        visible: isLoadingImage && showLoadingProgress,
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
                                   ],
                                 ),
-                                Center(
-                                  child: Visibility(
-                                    visible: isLoadingImage && showLoadingProgress,
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-              Visibility(
-                visible: !isLoadingImage && selectedButton != PickerStateConstant.brush,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Wrap(
-                      direction: Axis.vertical,
-                      spacing: 20,
-                      children: [
-                        Stack(
-                          children: [
-                            if (selectedColor == CustomColors.riskExtremely3)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(
-                                  Icons.circle_outlined,
-                                  size: 32,
+                    )
+                  ],
+                ),
+                Visibility(
+                  visible: !isLoadingImage && selectedButton != PickerStateConstant.brush,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Wrap(
+                        direction: Axis.vertical,
+                        spacing: 20,
+                        children: [
+                          Stack(
+                            children: [
+                              if (selectedColor == CustomColors.riskExtremely3)
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    Icons.circle_outlined,
+                                    size: 32,
+                                  ),
                                 ),
-                              ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.circle,
-                                color: CustomColors.riskExtremely3,
-                                size: selectedColor == CustomColors.riskExtremely3 ? 20 : 24,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  selectedColor = CustomColors.riskExtremely3;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        Stack(
-                          children: [
-                            if (selectedColor == CustomColors.riskHigh3)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(
-                                  Icons.circle_outlined,
-                                  size: 32,
+                              IconButton(
+                                icon: Icon(
+                                  Icons.circle,
+                                  color: CustomColors.riskExtremely3,
+                                  size: selectedColor == CustomColors.riskExtremely3 ? 20 : 24,
                                 ),
+                                onPressed: () {
+                                  setState(() {
+                                    selectedColor = CustomColors.riskExtremely3;
+                                  });
+                                },
                               ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.circle,
-                                color: CustomColors.riskHigh3,
-                                size: selectedColor == CustomColors.riskHigh3 ? 20 : 24,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  selectedColor = CustomColors.riskHigh3;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        Stack(
-                          children: [
-                            if (selectedColor == CustomColors.riskLow3)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(
-                                  Icons.circle_outlined,
-                                  size: 32,
+                            ],
+                          ),
+                          Stack(
+                            children: [
+                              if (selectedColor == CustomColors.riskHigh3)
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    Icons.circle_outlined,
+                                    size: 32,
+                                  ),
                                 ),
-                              ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.circle,
-                                color: CustomColors.riskLow3,
-                                size: selectedColor == CustomColors.riskLow3 ? 20 : 24,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  selectedColor = CustomColors.riskLow3;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        Stack(
-                          children: [
-                            if (selectedColor == CustomColors.riskMedium3)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(
-                                  Icons.circle_outlined,
-                                  size: 32,
+                              IconButton(
+                                icon: Icon(
+                                  Icons.circle,
+                                  color: CustomColors.riskHigh3,
+                                  size: selectedColor == CustomColors.riskHigh3 ? 20 : 24,
                                 ),
+                                onPressed: () {
+                                  setState(() {
+                                    selectedColor = CustomColors.riskHigh3;
+                                  });
+                                },
                               ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.circle,
-                                color: CustomColors.riskMedium3,
-                                size: selectedColor == CustomColors.riskMedium3 ? 20 : 24,
+                            ],
+                          ),
+                          Stack(
+                            children: [
+                              if (selectedColor == CustomColors.riskLow3)
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    Icons.circle_outlined,
+                                    size: 32,
+                                  ),
+                                ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.circle,
+                                  color: CustomColors.riskLow3,
+                                  size: selectedColor == CustomColors.riskLow3 ? 20 : 24,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    selectedColor = CustomColors.riskLow3;
+                                  });
+                                },
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  selectedColor = CustomColors.riskMedium3;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                          Stack(
+                            children: [
+                              if (selectedColor == CustomColors.riskMedium3)
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    Icons.circle_outlined,
+                                    size: 32,
+                                  ),
+                                ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.circle,
+                                  color: CustomColors.riskMedium3,
+                                  size: selectedColor == CustomColors.riskMedium3 ? 20 : 24,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    selectedColor = CustomColors.riskMedium3;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
+              ],
+            ),
+          );
+        }),
         bottomNavigationBar: openbottomsheet
             ? Container()
             : Container(
@@ -935,6 +954,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     if (kIsWeb) {
       try {
         screenshotController.captureAsUiImage().then((image) async {
+          debugPrint('image width debug: ' + image.width.toString());
+          debugPrint('image height debug: ' + image.height.toString());
           // convert Image to base64
           final imagebytes = await image.toByteData(format: ImageByteFormat.png);
           final base64 = base64Encode(imagebytes.buffer.asUint8List());
@@ -956,8 +977,14 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       }
     }
 
-    screenshotController.capture(delay: Duration(milliseconds: 500), pixelRatio: 1.5).then((File image) async {
-      //print("Capture Done");
+    screenshotController.capture(delay: Duration(milliseconds: 500), pixelRatio: 1).then((File image) async {
+      final bodyHeight = MediaQuery.of(context).size.height -
+          Scaffold.of(context).appBarMaxHeight -
+          Scaffold.of(context).appBarMaxHeight;
+
+      final bodyWidth = MediaQuery.of(context).size.width;
+
+      final _screenshotMinSize = min(bodyHeight, bodyWidth);
 
       final paths = await getExternalStorageDirectory();
       final _path = paths.path + '/' + DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
@@ -967,8 +994,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         final scale = calcScale(
           srcWidth: decodedImage.width.toDouble(),
           srcHeight: decodedImage.height.toDouble(),
-          minWidth: 500,
-          minHeight: 892,
+          minWidth: _screenshotMinSize,
+          minHeight: _screenshotMinSize,
         );
 
         final result = await FlutterImageCompress.compressAndGetFile(
