@@ -832,46 +832,57 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                     isLoadingImage = true;
                                     Navigator.pop(context);
 
-                                    if (kIsWeb) {
-                                      // final bytes = await ImagePickerWeb.getImageAsBytes();
+                                    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+                                    final bytes = await pickedFile.readAsBytes();
+                                    final base64 = base64Encode(bytes.buffer.asUint8List());
 
-                                      // if (bytes == null) {
-                                      //   print('bytes is null');
-                                      // }
+                                    setState(() {
+                                      isLoadingImage = false;
+                                      _imageBytes = bytes;
+                                    });
 
-                                      // if (bytes != null) {
-                                      //   print('bytes');
-                                      //   setState(() {
-                                      //     isLoadingImage = false;
-                                      //     _imageBytes = bytes;
-                                      //   });
-                                      // }
+                                    await _showCropDialog();
 
-                                      // print('before show crop dialog');
-                                      // await _showCropDialog();
-                                    } else {
-                                      try {
-                                        var image = await picker.getImage(source: ImageSource.gallery);
+                                    // if (kIsWeb) {
+                                    //   final bytes = await ImagePickerWeb.getImageAsBytes();
 
-                                        if (image?.path != null) {
-                                          final _bytesImg = File(image.path).readAsBytesSync();
-                                          // var decodedImage = await decodeImageFromList(_bytesImg);
+                                    //   if (bytes == null) {
+                                    //     print('bytes is null');
+                                    //   }
 
-                                          if (_bytesImg == null) return;
+                                    //   if (bytes != null) {
+                                    //     print('bytes');
+                                    //     setState(() {
+                                    //       isLoadingImage = false;
+                                    //       _imageBytes = bytes;
+                                    //     });
+                                    //   }
 
-                                          setState(() {
-                                            // height = decodedImage.height.toDouble();
-                                            // width = decodedImage.width.toDouble();
-                                            // _image = File(image.path);
-                                            _imageBytes = _bytesImg;
-                                          });
+                                    //   print('before show crop dialog');
+                                    //   await _showCropDialog();
+                                    // } else {
+                                    // try {
+                                    //   var image = await picker.getImage(source: ImageSource.gallery);
 
-                                          await _showCropDialog();
-                                        }
-                                      } catch (e) {
-                                        print('error: $e');
-                                      }
-                                    }
+                                    //   if (image?.path != null) {
+                                    //     final _bytesImg = File(image.path).readAsBytesSync();
+                                    //     // var decodedImage = await decodeImageFromList(_bytesImg);
+
+                                    //     if (_bytesImg == null) return;
+
+                                    //     setState(() {
+                                    //       // height = decodedImage.height.toDouble();
+                                    //       // width = decodedImage.width.toDouble();
+                                    //       // _image = File(image.path);
+                                    //       _imageBytes = _bytesImg;
+                                    //     });
+
+                                    //     await _showCropDialog();
+                                    //   }
+                                    // } catch (e) {
+                                    // print('error: $e');
+                                    // }
+                                    // }
 
                                     setState(() => _controller.clear());
                                     await Future.delayed(Duration(seconds: 1), () {
