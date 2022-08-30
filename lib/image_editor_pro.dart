@@ -513,14 +513,6 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                         children: [
                           Stack(
                             children: [
-                              if (selectedColor == CustomColors.riskExtremely3)
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.circle_outlined,
-                                    size: 32,
-                                  ),
-                                ),
                               IconButton(
                                 icon: Icon(
                                   Icons.circle,
@@ -533,18 +525,19 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   });
                                 },
                               ),
+                              if (selectedColor == CustomColors.riskExtremely3)
+                                Padding(
+                                  padding: const EdgeInsets.all(3.0),
+                                  child: Icon(
+                                    Icons.add_circle_outline,
+                                    color: Colors.white,
+                                    size: 35,
+                                  ),
+                                ),
                             ],
                           ),
                           Stack(
                             children: [
-                              if (selectedColor == CustomColors.riskHigh3)
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.circle_outlined,
-                                    size: 32,
-                                  ),
-                                ),
                               IconButton(
                                 icon: Icon(
                                   Icons.circle,
@@ -557,18 +550,18 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   });
                                 },
                               ),
+                              if (selectedColor == CustomColors.riskHigh3)
+                                Padding(
+                                  padding: const EdgeInsets.all(3.0),
+                                  child: Icon(
+                                    Icons.add_circle_outline,
+                                    size: 35,
+                                  ),
+                                ),
                             ],
                           ),
                           Stack(
                             children: [
-                              if (selectedColor == CustomColors.riskLow3)
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.circle_outlined,
-                                    size: 32,
-                                  ),
-                                ),
                               IconButton(
                                 icon: Icon(
                                   Icons.circle,
@@ -581,18 +574,18 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   });
                                 },
                               ),
+                              if (selectedColor == CustomColors.riskLow3)
+                                Padding(
+                                  padding: const EdgeInsets.all(3.0),
+                                  child: Icon(
+                                    Icons.add_circle_outline,
+                                    size: 35,
+                                  ),
+                                ),
                             ],
                           ),
                           Stack(
                             children: [
-                              if (selectedColor == CustomColors.riskMedium3)
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.circle_outlined,
-                                    size: 32,
-                                  ),
-                                ),
                               IconButton(
                                 icon: Icon(
                                   Icons.circle,
@@ -605,6 +598,14 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   });
                                 },
                               ),
+                              if (selectedColor == CustomColors.riskMedium3)
+                                Padding(
+                                  padding: const EdgeInsets.all(3.0),
+                                  child: Icon(
+                                    Icons.add_circle_outline,
+                                    size: 35,
+                                  ),
+                                ),
                             ],
                           ),
                         ],

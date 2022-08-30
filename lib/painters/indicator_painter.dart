@@ -1,6 +1,6 @@
 part of image_editor_pro;
 
-const double STROKE = 18.0;
+const double STROKE = 9.0;
 const double ARROW_ANGLE = 75.0;
 
 class IndicatorPainter extends CustomPainter {
@@ -14,13 +14,12 @@ class IndicatorPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
-      ..strokeWidth = selectedSize;
+      ..strokeWidth = 1;
 
     /// Draw a single arrow.
     path = Path();
     path.moveTo(pointInitial.dx, pointInitial.dy);
-    path.cubicTo(pointFinal.dx, pointFinal.dy, pointFinal.dx, pointFinal.dy,
-        pointFinal.dx, pointFinal.dy);
+    path.cubicTo(pointFinal.dx, pointFinal.dy, pointFinal.dx, pointFinal.dy, pointFinal.dx, pointFinal.dy);
     try {
       path = ArrowPath.make(
         path: path,
