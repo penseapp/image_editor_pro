@@ -289,6 +289,16 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   onPressed: isLoadingImage ? null : _clearAll,
                   child: Row(
                     children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 5),
                       Icon(
                         Icons.delete_outline,
                         color: Colors.white,
@@ -455,7 +465,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                           circleStack,
                                           squareStack,
                                           indicatorStack,
-                                          if (selectedButton == PickerStateConstant.brush) Signat(),
+                                          // if (selectedButton == PickerStateConstant.brush) Signat(),
+                                          Signat(),
                                           drawSelector(),
                                           ...multiwidget.asMap().entries.map((f) {
                                             return type[f.key] == 2
@@ -834,6 +845,15 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                     Navigator.pop(context);
 
                                     final pickedFile = await picker.getImage(source: ImageSource.gallery);
+                                    if (pickedFile == null) {
+                                      setState(() => _controller.clear());
+                                      await Future.delayed(Duration(seconds: 1), () {
+                                        isLoadingImage = false;
+                                        setState(() {});
+                                      });
+                                      return;
+                                    }
+
                                     final bytes = await pickedFile.readAsBytes();
                                     final base64 = base64Encode(bytes.buffer.asUint8List());
 
