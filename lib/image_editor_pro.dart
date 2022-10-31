@@ -88,7 +88,8 @@ int howmuchwidgets = 0;
 List multiwidget = [];
 Color currentcolors = Colors.white;
 double opacity = 0.0;
-SignatureController _controller = SignatureController(penStrokeWidth: 5, penColor: selectedColor);
+SignatureController _controller =
+    SignatureController(penStrokeWidth: 5, penColor: selectedColor);
 
 class ImageEditorPro extends StatefulWidget {
   final Color appBarColor;
@@ -111,7 +112,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
   void changeColor(Color color) {
     setState(() => selectedColor = color);
     var points = _controller.points;
-    _controller = SignatureController(penStrokeWidth: 5, penColor: color, points: points);
+    _controller =
+        SignatureController(penStrokeWidth: 5, penColor: color, points: points);
   }
 
   List<Offset> offsets = [];
@@ -415,16 +417,20 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                       if (_croppedImage != null)
                                         Image(
                                           image: _croppedImage.image,
-                                          fit: kIsWeb ? BoxFit.fitHeight : BoxFit.fitWidth,
+                                          fit: kIsWeb
+                                              ? BoxFit.fitHeight
+                                              : BoxFit.fitWidth,
                                           width: _screenshotMinSize,
                                           height: _screenshotMinSize,
                                           alignment: Alignment.center,
                                         ),
-                                      if (_imageBytes != null && _croppedImage == null)
+                                      if (_imageBytes != null &&
+                                          _croppedImage == null)
                                         Container(
                                           width: _screenshotMinSize,
                                           height: _screenshotMinSize,
-                                          transform: Matrix4.translationValues(imgX, imgY, 0),
+                                          transform: Matrix4.translationValues(
+                                              imgX, imgY, 0),
                                           child: Image.memory(
                                             _imageBytes,
                                             width: _screenshotMinSize,
@@ -455,11 +461,16 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                               left: -300,
                                               child: Column(
                                                 children: [
-                                                  Text(squares.length.toString()),
-                                                  Text(circles.length.toString()),
-                                                  Text(indicators.length.toString()),
-                                                  Text(_controller.points.length.toString()),
-                                                  Text(multiwidget.length.toString()),
+                                                  Text(squares.length
+                                                      .toString()),
+                                                  Text(circles.length
+                                                      .toString()),
+                                                  Text(indicators.length
+                                                      .toString()),
+                                                  Text(_controller.points.length
+                                                      .toString()),
+                                                  Text(multiwidget.length
+                                                      .toString()),
                                                 ],
                                               )),
                                           circleStack,
@@ -468,27 +479,40 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                           // if (selectedButton == PickerStateConstant.brush) Signat(),
                                           Signat(),
                                           drawSelector(),
-                                          ...multiwidget.asMap().entries.map((f) {
+                                          ...multiwidget
+                                              .asMap()
+                                              .entries
+                                              .map((f) {
                                             return type[f.key] == 2
                                                 ? TextView(
                                                     left: offsets[f.key].dx,
                                                     top: offsets[f.key].dy,
                                                     ontap: () {
-                                                      scaf.currentState.showBottomSheet((context) {
+                                                      scaf.currentState
+                                                          .showBottomSheet(
+                                                              (context) {
                                                         return Sliders(
                                                           size: f.key,
-                                                          sizevalue: fontsize[f.key].toDouble(),
+                                                          sizevalue:
+                                                              fontsize[f.key]
+                                                                  .toDouble(),
                                                         );
                                                       });
                                                     },
                                                     onpanupdate: (details) {
                                                       setState(() {
-                                                        offsets[f.key] = Offset(offsets[f.key].dx + details.delta.dx,
-                                                            offsets[f.key].dy + details.delta.dy);
+                                                        offsets[f.key] = Offset(
+                                                            offsets[f.key].dx +
+                                                                details
+                                                                    .delta.dx,
+                                                            offsets[f.key].dy +
+                                                                details
+                                                                    .delta.dy);
                                                       });
                                                     },
                                                     value: f.value.toString(),
-                                                    fontsize: fontsize[f.key].toDouble(),
+                                                    fontsize: fontsize[f.key]
+                                                        .toDouble(),
                                                     align: TextAlign.center,
                                                   )
                                                 : Container();
@@ -497,7 +521,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                       ),
                                       Center(
                                         child: Visibility(
-                                          visible: isLoadingImage && showLoadingProgress,
+                                          visible: isLoadingImage &&
+                                              showLoadingProgress,
                                           child: CircularProgressIndicator(),
                                         ),
                                       ),
@@ -513,7 +538,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                   ],
                 ),
                 Visibility(
-                  visible: !isLoadingImage && selectedButton != PickerStateConstant.brush,
+                  visible: !isLoadingImage &&
+                      selectedButton != PickerStateConstant.brush,
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Padding(
@@ -528,7 +554,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                 icon: Icon(
                                   Icons.circle,
                                   color: CustomColors.riskExtremely3,
-                                  size: selectedColor == CustomColors.riskExtremely3 ? 20 : 24,
+                                  size: selectedColor ==
+                                          CustomColors.riskExtremely3
+                                      ? 20
+                                      : 24,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -553,7 +582,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                 icon: Icon(
                                   Icons.circle,
                                   color: CustomColors.riskHigh3,
-                                  size: selectedColor == CustomColors.riskHigh3 ? 20 : 24,
+                                  size: selectedColor == CustomColors.riskHigh3
+                                      ? 20
+                                      : 24,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -577,7 +608,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                 icon: Icon(
                                   Icons.circle,
                                   color: CustomColors.riskLow3,
-                                  size: selectedColor == CustomColors.riskLow3 ? 20 : 24,
+                                  size: selectedColor == CustomColors.riskLow3
+                                      ? 20
+                                      : 24,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -601,7 +634,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                 icon: Icon(
                                   Icons.circle,
                                   color: CustomColors.riskMedium3,
-                                  size: selectedColor == CustomColors.riskMedium3 ? 20 : 24,
+                                  size:
+                                      selectedColor == CustomColors.riskMedium3
+                                          ? 20
+                                          : 24,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -631,7 +667,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
         bottomNavigationBar: openbottomsheet
             ? Container()
             : Container(
-                decoration: BoxDecoration(color: widget.bottomBarColor, boxShadow: [BoxShadow(blurRadius: 10.9)]),
+                decoration: BoxDecoration(
+                    color: widget.bottomBarColor,
+                    boxShadow: [BoxShadow(blurRadius: 10.9)]),
                 height: 70,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
@@ -639,7 +677,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                     brush(),
                     BottomBarContainer(
                       icons: Icons.arrow_upward,
-                      isSelected: selectedButton == PickerStateConstant.indicator,
+                      isSelected:
+                          selectedButton == PickerStateConstant.indicator,
                       ontap: () {
                         selectedButton = PickerStateConstant.indicator;
                         drawState = PickerStateConstant.indicator;
@@ -768,7 +807,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
     print('showCropDialog');
     final cropController = CropController(
       aspectRatio: 1,
-      defaultCrop: kIsWeb ? const Rect.fromLTWH(0, 0, 1, 1) : const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
+      defaultCrop: kIsWeb
+          ? const Rect.fromLTWH(0, 0, 1, 1)
+          : const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
     );
     print('crop controller');
 
@@ -813,8 +854,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          decoration:
-              BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(blurRadius: 10.9, color: Colors.grey[400])]),
+          decoration: BoxDecoration(color: Colors.white, boxShadow: [
+            BoxShadow(blurRadius: 10.9, color: Colors.grey[400])
+          ]),
           height: 170,
           child: Column(
             children: <Widget>[
@@ -841,21 +883,25 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                   icon: Icon(Icons.photo_library),
                                   onPressed: () async {
                                     print('photo library');
-                                    isLoadingImage = true;
+                                    isLoadingImage = false;
                                     Navigator.pop(context);
 
-                                    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+                                    final pickedFile = await picker.getImage(
+                                        source: ImageSource.gallery);
                                     if (pickedFile == null) {
                                       setState(() => _controller.clear());
-                                      await Future.delayed(Duration(seconds: 1), () {
+                                      await Future.delayed(Duration(seconds: 1),
+                                          () {
                                         isLoadingImage = false;
                                         setState(() {});
                                       });
                                       return;
                                     }
 
-                                    final bytes = await pickedFile.readAsBytes();
-                                    final base64 = base64Encode(bytes.buffer.asUint8List());
+                                    final bytes =
+                                        await pickedFile.readAsBytes();
+                                    final base64 = base64Encode(
+                                        bytes.buffer.asUint8List());
 
                                     setState(() {
                                       isLoadingImage = false;
@@ -906,7 +952,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                     // }
 
                                     setState(() => _controller.clear());
-                                    await Future.delayed(Duration(seconds: 1), () {
+                                    await Future.delayed(Duration(seconds: 1),
+                                        () {
                                       isLoadingImage = false;
                                       setState(() {});
                                     });
@@ -931,24 +978,31 @@ class _ImageEditorProState extends State<ImageEditorPro> {
                                     : () async {
                                         isLoadingImage = true;
                                         Navigator.pop(context);
-                                        var image = await picker.getImage(source: ImageSource.camera);
+                                        var image = await picker.getImage(
+                                            source: ImageSource.camera);
 
                                         if (image == null) {
                                           isLoadingImage = false;
                                           setState(() {});
                                         } else {
-                                          final _imgBytes = File(image.path).readAsBytesSync();
+                                          final _imgBytes = File(image.path)
+                                              .readAsBytesSync();
                                           var decodedImage =
-                                              await decodeImageFromList(File(image.path).readAsBytesSync());
+                                              await decodeImageFromList(
+                                                  File(image.path)
+                                                      .readAsBytesSync());
 
                                           setState(() {
-                                            height = decodedImage.height.toDouble();
-                                            width = decodedImage.width.toDouble();
+                                            height =
+                                                decodedImage.height.toDouble();
+                                            width =
+                                                decodedImage.width.toDouble();
                                             // _image = File(image.path);
                                             _imageBytes = _imgBytes;
                                           });
                                           setState(() => _controller.clear());
-                                          await Future.delayed(Duration(seconds: 1), () {
+                                          await Future.delayed(
+                                              Duration(seconds: 1), () {
                                             isLoadingImage = false;
                                             setState(() {});
                                           });
@@ -991,7 +1045,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           debugPrint('image width debug: ' + image.width.toString());
           debugPrint('image height debug: ' + image.height.toString());
           // convert Image to base64
-          final imagebytes = await image.toByteData(format: ImageByteFormat.png);
+          final imagebytes =
+              await image.toByteData(format: ImageByteFormat.png);
           final base64 = base64Encode(imagebytes.buffer.asUint8List());
 
           setState(() {
@@ -1011,9 +1066,14 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       }
     }
 
-    screenshotController.capture(delay: Duration(milliseconds: 500), pixelRatio: 1).then((File image) async {
+    screenshotController
+        .capture(delay: Duration(milliseconds: 500), pixelRatio: 1)
+        .then((File image) async {
       final paths = await getExternalStorageDirectory();
-      final _path = paths.path + '/' + DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
+      final _path = paths.path +
+          '/' +
+          DateTime.now().millisecondsSinceEpoch.toString() +
+          '.jpg';
 
       if (image != null && image.path != null) {
         final decodedImage = await decodeImageFromList(image.readAsBytesSync());
@@ -1041,9 +1101,11 @@ class _ImageEditorProState extends State<ImageEditorPro> {
       }
 
       // convert File to Image
-      final decodedImage = await decodeImageFromList(File(_path).readAsBytesSync());
+      final decodedImage =
+          await decodeImageFromList(File(_path).readAsBytesSync());
       // Convert image to String base64
-      final imagebytes = await decodedImage.toByteData(format: ImageByteFormat.png);
+      final imagebytes =
+          await decodedImage.toByteData(format: ImageByteFormat.png);
       // Convert ByteData to base64 string
       final base64 = base64Encode(imagebytes.buffer.asUint8List());
 
@@ -1073,7 +1135,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             onPanUpdate: (DragUpdateDetails details) {
               setState(() {
                 RenderBox object = context.findRenderObject();
-                var _localPosition = object.globalToLocal(details.globalPosition);
+                var _localPosition =
+                    object.globalToLocal(details.globalPosition);
                 _points = List.from(_points)..add(_localPosition);
               });
             },
@@ -1101,7 +1164,8 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             );
           },
           onPanEnd: (details) {
-            squares.add(OffsetSquare(globalSquareA, globalSquareB, selectedColor, selectedSize));
+            squares.add(OffsetSquare(
+                globalSquareA, globalSquareB, selectedColor, selectedSize));
             setState(() {
               squareStack = CustomPaint(
                 painter: SquarePainter(),
@@ -1124,8 +1188,9 @@ class _ImageEditorProState extends State<ImageEditorPro> {
             print(details.localPosition);
             setState(() {
               globalCircleCenter = details.localPosition;
-              sizeCircle = sqrt(pow((globalCircleCenter.dy - radiusCenter.dy), 2) +
-                      pow((globalCircleCenter.dx - radiusCenter.dx), 2))
+              sizeCircle = sqrt(
+                      pow((globalCircleCenter.dy - radiusCenter.dy), 2) +
+                          pow((globalCircleCenter.dx - radiusCenter.dx), 2))
                   .toInt();
             });
             circleStack = CustomPaint(
@@ -1135,7 +1200,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           },
           onPanEnd: (details) {
             circles.add(OffsetCircle(
-                radiusCenter: radiusCenter, sizeCircle: sizeCircle, color: selectedColor, size: selectedSize));
+                radiusCenter: radiusCenter,
+                sizeCircle: sizeCircle,
+                color: selectedColor,
+                size: selectedSize));
             setState(() {
               circleStack = CustomPaint(
                 painter: CirclePainter(),
@@ -1178,7 +1246,10 @@ class _ImageEditorProState extends State<ImageEditorPro> {
           },
           onPanEnd: (details) {
             indicators.add(OffsetIndicator(
-                pointFinal: pointFinal, pointInitial: pointInitial, color: selectedColor, size: selectedSize));
+                pointFinal: pointFinal,
+                pointInitial: pointInitial,
+                color: selectedColor,
+                size: selectedSize));
             setState(() {
               indicatorStack = CustomPaint(
                 painter: IndicatorPainter(),
